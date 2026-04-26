@@ -419,6 +419,7 @@ private fun actionMenuList(
       testingTag = DELETE_MENU_ICON_TESTING_TAG
     )
   )
+
   else -> listOfNotNull(
     when {
       !isSearchActive -> ActionMenuItem(

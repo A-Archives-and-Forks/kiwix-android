@@ -35,8 +35,6 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTouchInput
 import com.jakewharton.threetenabp.AndroidThreeTen
-import org.threeten.bp.LocalDate
-import org.threeten.bp.format.DateTimeFormatter
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -58,6 +56,8 @@ import org.kiwix.kiwixmobile.core.ui.models.IconItem
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
+import org.threeten.bp.LocalDate
+import org.threeten.bp.format.DateTimeFormatter
 
 /**
  * Behavior-driven UI tests for [PageScreen].
@@ -155,7 +155,7 @@ class PageScreenTest {
       { NavigationIcon(onClick = {}) }
   ) {
     composeTestRule.setContent {
-      PageScreen<TestPage, PageState<TestPage>>(
+      PageScreen(
         state = state,
         searchText = searchText,
         screenTitle = screenTitle,
@@ -479,7 +479,8 @@ class PageScreenTest {
   @Test
   fun dateItem_todayLabelDisplayed() {
     // Use US locale to match Robolectric default for parsing/formatting
-    val today = LocalDate.now().format(DateTimeFormatter.ofPattern("d MMM yyyy", java.util.Locale.US))
+    val today =
+      LocalDate.now().format(DateTimeFormatter.ofPattern("d MMM yyyy", java.util.Locale.US))
     val dateItem = HistoryListItem.DateItem(today)
     // pageItems must be non-empty so PageScreen renders the PageList
     // (it checks state.pageItems.isEmpty() to decide list vs empty state)
