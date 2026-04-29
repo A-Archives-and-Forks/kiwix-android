@@ -20,6 +20,7 @@ package org.kiwix.kiwixmobile.language
 
 import android.os.Build
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.assertIsDisplayed
@@ -37,8 +38,11 @@ import org.kiwix.kiwixmobile.core.R
 import org.kiwix.kiwixmobile.core.page.SEARCH_ICON_TESTING_TAG
 import org.kiwix.kiwixmobile.core.search.SEARCH_FIELD_TESTING_TAG
 import org.kiwix.kiwixmobile.core.ui.components.CONTENT_LOADING_PROGRESS_BAR_TESTING_TAG
+import org.kiwix.kiwixmobile.core.ui.components.NAVIGATION_ICON_TESTING_TAG
+import org.kiwix.kiwixmobile.core.ui.components.NavigationIcon
 import org.kiwix.kiwixmobile.core.ui.models.ActionMenuItem
 import org.kiwix.kiwixmobile.core.ui.models.IconItem
+import org.kiwix.kiwixmobile.core.ui.models.IconItem.Vector
 import org.kiwix.kiwixmobile.core.zim_manager.Language
 import org.kiwix.kiwixmobile.language.composables.LANGUAGE_HEADER_TESTING_TAG
 import org.kiwix.kiwixmobile.language.composables.LanguageListItem
@@ -56,8 +60,6 @@ class LanguageScreenUITest {
   val composeTestRule = createComposeRule()
 
   private val context get() = RuntimeEnvironment.getApplication()
-
-  // ======== Helper ========
   private fun mockLanguage(
     languageCode: String = "en",
     active: Boolean = false,
@@ -83,7 +85,6 @@ class LanguageScreenUITest {
     testingTag = SEARCH_ICON_TESTING_TAG
   )
 
-  // ======== Language Screen Helper ========
   private fun mockLanguageScreen(
     searchText: String = "",
     isSearchActive: Boolean = false,
@@ -110,8 +111,6 @@ class LanguageScreenUITest {
       )
     }
   }
-
-  // ======== App Bar ========
 
   @Test
   fun languageScreen_whenScreenLaunched_titleIsDisplayed() {
@@ -167,8 +166,6 @@ class LanguageScreenUITest {
     assertTrue("Search icon callback should be triggered", clicked)
   }
 
-  // ======== Search Field ========
-
   @Test
   fun languageScreen_whenSearchIsActive_searchFieldIsDisplayed() {
     mockLanguageScreen(isSearchActive = true)
@@ -196,7 +193,32 @@ class LanguageScreenUITest {
       .assertDoesNotExist()
   }
 
-  // ======== Loading State ========
+  @Test
+  fun languageScreen_whenUserTypesInSearchField_queryIsDisplayed() {
+    mockLanguageScreen(
+      isSearchActive = true,
+      searchText = "English"
+    )
+    composeTestRule
+      .onNodeWithText("English")
+      .assertIsDisplayed()
+  }
+
+  @Test
+  fun languageScreen_whenClearSearchClicked_callbackIsTriggered() {
+    var cleared = false
+    mockLanguageScreen(
+      isSearchActive = true,
+      searchText = "English",
+      onClearClick = { cleared = true }
+    )
+    composeTestRule
+      .onNodeWithContentDescription(
+        context.getString(R.string.searchview_description_clear)
+      )
+      .performClick()
+    assertTrue("onClearClick callback should be triggered", cleared)
+  }
 
   @Test
   fun languageScreen_whenStateIsLoading_progressBarIsDisplayed() {
@@ -216,8 +238,6 @@ class LanguageScreenUITest {
       .assertDoesNotExist()
   }
 
-  // ======== Saving State ========
-
   @Test
   fun languageScreen_whenStateIsSaving_progressBarIsDisplayed() {
     mockLanguageScreen(state = State.Saving)
@@ -236,7 +256,48 @@ class LanguageScreenUITest {
       .assertDoesNotExist()
   }
 
-  // ======== Error State ========
+  @Test
+  fun languageScreen_whenBackPressedWhileSearchActive_navigationIconCallbackIsTriggered() {
+    var backPressHandled = false
+    mockLanguageScreen(
+      isSearchActive = true,
+      actionMenuItemList = listOf(saveActionMenuItem()),
+      navigationIcon = {
+        NavigationIcon(
+          iconItem = Vector(Icons.AutoMirrored.Filled.ArrowBack),
+          onClick = { backPressHandled = true }
+        )
+      }
+    )
+    composeTestRule
+      .onNodeWithTag(NAVIGATION_ICON_TESTING_TAG)
+      .performClick()
+    assertTrue(
+      "Navigation icon callback should be triggered when search is active",
+      backPressHandled
+    )
+  }
+
+  @Test
+  fun languageScreen_whenBackPressedWhileSearchNotActive_navigationIconCallbackIsTriggered() {
+    var navigatedBack = false
+    mockLanguageScreen(
+      isSearchActive = false,
+      navigationIcon = {
+        NavigationIcon(
+          iconItem = IconItem.Drawable(R.drawable.ic_close_white_24dp),
+          onClick = { navigatedBack = true }
+        )
+      }
+    )
+    composeTestRule
+      .onNodeWithTag(NAVIGATION_ICON_TESTING_TAG)
+      .performClick()
+    assertTrue(
+      "navigateBack callback should be triggered when search is not active",
+      navigatedBack
+    )
+  }
 
   @Test
   fun languageScreen_whenStateIsError_errorMessageIsDisplayed() {
@@ -263,8 +324,6 @@ class LanguageScreenUITest {
       )
       .assertDoesNotExist()
   }
-
-  // ======== Content State ========
 
   @Test
   fun languageScreen_whenStateIsContent_languageItemIsDisplayed() {
