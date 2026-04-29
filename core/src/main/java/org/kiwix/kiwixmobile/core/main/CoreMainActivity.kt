@@ -168,7 +168,7 @@ abstract class CoreMainActivity : BaseActivity(), WebViewProvider {
   val enableLeftDrawer = mutableStateOf(true)
 
   /**
-   * For managing the back press of fragments.
+   * For managing the back press of compose screens.
    */
   val customBackHandler = mutableStateOf<(() -> FragmentActivityExtensions.Super)?>(null)
 
@@ -177,6 +177,8 @@ abstract class CoreMainActivity : BaseActivity(), WebViewProvider {
    */
   @OptIn(ExperimentalMaterial3Api::class)
   var bottomAppBarScrollBehaviour: BottomAppBarScrollBehavior? = null
+
+  var activityResultForwarder: ((Int, Int, Intent?) -> Unit)? = null
   abstract val bookmarksFragmentRoute: String
   abstract val settingsFragmentRoute: String
   abstract val historyFragmentRoute: String
@@ -269,6 +271,7 @@ abstract class CoreMainActivity : BaseActivity(), WebViewProvider {
   @Suppress("DEPRECATION")
   override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
     super.onActivityResult(requestCode, resultCode, data)
+    activityResultForwarder?.invoke(requestCode, resultCode, data)
     activeFragments().iterator().forEach { it.onActivityResult(requestCode, resultCode, data) }
   }
 
