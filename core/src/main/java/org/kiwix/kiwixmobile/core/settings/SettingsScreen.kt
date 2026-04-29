@@ -29,6 +29,7 @@ import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -67,6 +68,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.hideFromAccessibility
@@ -287,7 +289,8 @@ private fun showExportBookmarkDialog(coreSettingsViewModel: CoreSettingsViewMode
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("ComposableLambdaParameterNaming")
 @Composable
-private fun SettingsScreen(
+@VisibleForTesting
+internal fun SettingsScreen(
   coreSettingsViewModel: CoreSettingsViewModel,
   navigationIcon: @Composable() () -> Unit
 ) {
@@ -626,7 +629,7 @@ private fun SwitchPreference(
       Switch(
         checked = checked,
         onCheckedChange = onCheckedChange,
-        modifier = Modifier.semantics { contentDescription = title }
+        modifier = Modifier.semantics { contentDescription = title }.testTag(title)
       )
     }
   }
