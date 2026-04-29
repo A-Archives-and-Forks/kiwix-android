@@ -20,8 +20,9 @@ package org.kiwix.kiwixmobile.core.settings
 
 import android.os.Build
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.ui.test.assertDoesNotExist
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsOff
+import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasTestTag
@@ -43,6 +44,9 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.kiwix.kiwixmobile.core.R
+import org.kiwix.kiwixmobile.core.settings.viewmodel.Action
+import org.kiwix.kiwixmobile.core.settings.viewmodel.Action.AllowPermission
+import org.kiwix.kiwixmobile.core.settings.viewmodel.Action.ClearAllHistory
 import org.kiwix.kiwixmobile.core.settings.viewmodel.CoreSettingsViewModel
 import org.kiwix.kiwixmobile.core.settings.viewmodel.CoreSettingsViewModel.SettingsUiState
 import org.kiwix.kiwixmobile.core.ui.components.NAVIGATION_ICON_TESTING_TAG
@@ -203,8 +207,20 @@ class SettingsScreenTest {
     renderSettingsScreen(createMockViewModel())
     scrollToContentDescription(context.getString(R.string.pref_back_to_top))
     composeTestRule
-      .onNodeWithText(context.getString(R.string.pref_back_to_top))
+      .onNodeWithTag(context.getString(R.string.pref_back_to_top))
       .assertIsDisplayed()
+      .assertIsOff()
+  }
+
+  @Test
+  fun backToTopSwitch_reflectsStateChange() {
+    renderSettingsScreen(createMockViewModel(backToTopEnabled = true))
+    scrollToContentDescription(context.getString(R.string.pref_back_to_top))
+
+    composeTestRule
+      .onNodeWithTag(context.getString(R.string.pref_back_to_top))
+      .assertIsDisplayed()
+      .assertIsOn()
   }
 
   @Test
@@ -242,8 +258,20 @@ class SettingsScreenTest {
     renderSettingsScreen(createMockViewModel())
     scrollToContentDescription(context.getString(R.string.pref_newtab_background_title))
     composeTestRule
-      .onNodeWithText(context.getString(R.string.pref_newtab_background_title))
+      .onNodeWithTag(context.getString(R.string.pref_newtab_background_title))
       .assertIsDisplayed()
+      .assertIsOff()
+  }
+
+  @Test
+  fun settingsScreen_extrasCategory_newTabInBackgroundSwitch_reflectsStateChange() {
+    renderSettingsScreen(createMockViewModel(newTabInBackground = true))
+    scrollToContentDescription(context.getString(R.string.pref_newtab_background_title))
+
+    composeTestRule
+      .onNodeWithTag(context.getString(R.string.pref_newtab_background_title))
+      .assertIsDisplayed()
+      .assertIsOn()
   }
 
   @Test
@@ -255,8 +283,25 @@ class SettingsScreenTest {
     )
     scrollToContentDescription(context.getString(R.string.pref_external_link_popup_title))
     composeTestRule
-      .onNodeWithText(context.getString(R.string.pref_external_link_popup_title))
+      .onNodeWithTag(context.getString(R.string.pref_external_link_popup_title))
       .assertIsDisplayed()
+      .assertIsOn()
+  }
+
+  @Test
+  fun settingsScreen_extrasCategory_externalLinkPreference_reflectsStateChange() {
+    renderSettingsScreen(
+      createMockViewModel(
+        uiState = SettingsUiState(shouldShowExternalLinkPreference = true),
+        externalLinkPopup = false
+      )
+    )
+    scrollToContentDescription(context.getString(R.string.pref_external_link_popup_title))
+
+    composeTestRule
+      .onNodeWithTag(context.getString(R.string.pref_external_link_popup_title))
+      .assertIsDisplayed()
+      .assertIsOff()
   }
 
   @Test
@@ -280,8 +325,24 @@ class SettingsScreenTest {
     )
     scrollToContentDescription(context.getString(R.string.pref_wifi_only))
     composeTestRule
-      .onNodeWithText(context.getString(R.string.pref_wifi_only))
+      .onNodeWithTag(context.getString(R.string.pref_wifi_only))
       .assertIsDisplayed()
+      .assertIsOn()
+  }
+
+  @Test
+  fun settingsScreen_extrasCategory_wifiOnlyPreference_reflectsStateChange() {
+    renderSettingsScreen(
+      createMockViewModel(
+        uiState = SettingsUiState(shouldShowPrefWifiOnlyPreference = true),
+        wifiOnly = false
+      )
+    )
+    scrollToContentDescription(context.getString(R.string.pref_wifi_only))
+    composeTestRule
+      .onNodeWithTag(context.getString(R.string.pref_wifi_only))
+      .assertIsDisplayed()
+      .assertIsOff()
   }
 
   @Test
@@ -366,7 +427,7 @@ class SettingsScreenTest {
     composeTestRule
       .onNodeWithTag(PREFERENCE_ITEM_TESTING_TAG + title)
       .performClick()
-    verify { viewModel.sendAction(any()) }
+    verify { viewModel.sendAction(ClearAllHistory) }
   }
 
   @Test
@@ -397,7 +458,7 @@ class SettingsScreenTest {
     composeTestRule
       .onNodeWithTag(PREFERENCE_ITEM_TESTING_TAG + title)
       .performClick()
-    verify { viewModel.sendAction(any()) }
+    verify { viewModel.sendAction(Action.ClearAllNotes) }
   }
 
   @Test
@@ -438,7 +499,7 @@ class SettingsScreenTest {
     composeTestRule
       .onNodeWithTag(PREFERENCE_ITEM_TESTING_TAG + title)
       .performClick()
-    verify { viewModel.sendAction(any()) }
+    verify { viewModel.sendAction(Action.ImportBookmarks) }
   }
 
   @Test
@@ -450,7 +511,7 @@ class SettingsScreenTest {
     composeTestRule
       .onNodeWithTag(PREFERENCE_ITEM_TESTING_TAG + title)
       .performClick()
-    verify { viewModel.sendAction(any()) }
+    verify { viewModel.sendAction(Action.ExportBookmarks) }
   }
 
   @Test
@@ -489,7 +550,7 @@ class SettingsScreenTest {
     composeTestRule
       .onNodeWithTag(PREFERENCE_ITEM_TESTING_TAG + title)
       .performClick()
-    verify { viewModel.sendAction(any()) }
+    verify { viewModel.sendAction(AllowPermission) }
   }
 
   @Test
@@ -574,7 +635,7 @@ class SettingsScreenTest {
     composeTestRule
       .onNodeWithTag(PREFERENCE_ITEM_TESTING_TAG + title)
       .performClick()
-    verify { viewModel.sendAction(any()) }
+    verify { viewModel.sendAction(Action.OpenCredits) }
   }
 
   @Test
