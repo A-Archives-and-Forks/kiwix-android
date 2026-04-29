@@ -50,7 +50,9 @@ fun ContentLoadingProgressBar(
   when (progressBarStyle) {
     ProgressBarStyle.CIRCLE -> {
       CircularProgressIndicator(
-        modifier = modifier.semantics { testTag = CONTENT_LOADING_PROGRESS_BAR_TESTING_TAG },
+        modifier = Modifier
+          .semantics { testTag = CONTENT_LOADING_PROGRESS_BAR_TESTING_TAG }
+          .then(modifier),
         color = progressBarColor,
         trackColor = progressBarTrackColor,
         strokeWidth = circularProgressBarStockWidth
@@ -59,9 +61,10 @@ fun ContentLoadingProgressBar(
 
     ProgressBarStyle.HORIZONTAL -> {
       LinearProgressIndicator(
-        modifier = modifier
-          .fillMaxWidth()
-          .semantics { testTag = CONTENT_LOADING_PROGRESS_BAR_TESTING_TAG },
+        modifier = Modifier
+          .semantics { testTag = CONTENT_LOADING_PROGRESS_BAR_TESTING_TAG }
+          .then(modifier)
+          .fillMaxWidth(),
         progress = { progress.toFloat() / HUNDERED },
         color = progressBarColor,
         trackColor = progressBarTrackColor,
