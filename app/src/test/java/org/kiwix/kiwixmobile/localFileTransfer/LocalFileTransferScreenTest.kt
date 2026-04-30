@@ -36,22 +36,12 @@ import org.kiwix.kiwixmobile.core.ui.components.SHOWCASE_VIEW_NEXT_BUTTON_TESTIN
 import org.kiwix.kiwixmobile.core.ui.models.ActionMenuItem
 import org.kiwix.kiwixmobile.core.ui.models.IconItem
 import org.kiwix.kiwixmobile.core.page.SEARCH_ICON_TESTING_TAG
-import org.kiwix.kiwixmobile.core.utils.CONTENT_LOADING_PROGRESSBAR_TESTING_TAG
+import org.kiwix.kiwixmobile.core.ui.components.CONTENT_LOADING_PROGRESS_BAR_TESTING_TAG
 import org.kiwix.kiwixmobile.utils.TestApplication
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
 
-/**
- * Behavior-driven UI tests for [LocalFileTransferScreen].
- *
- * All tests render through the top-level [LocalFileTransferScreen] composable,
- * using [LocalFileTransferUiState] to drive different UI states.
- * This ensures we test real user-visible behavior, not internal
- * composable implementation details.
- *
- * Follows the same testing pattern as ReaderScreenComposablesTest (PR #4797).
- */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [Build.VERSION_CODES.R], application = TestApplication::class)
 class LocalFileTransferScreenTest {
@@ -60,10 +50,6 @@ class LocalFileTransferScreenTest {
 
   private val context get() = RuntimeEnvironment.getApplication()
 
-  /**
-   * Creates a minimal [LocalFileTransferUiState] with sensible defaults for testing.
-   * Test-specific values can be overridden via named parameters.
-   */
   private fun createTestState(
     deviceName: String = "Test Device",
     isReceiver: Boolean = false,
@@ -82,10 +68,6 @@ class LocalFileTransferScreenTest {
     isWritePermissionRequired = isWritePermissionRequired
   )
 
-  /**
-   * Renders the full [LocalFileTransferScreen] with the given state,
-   * providing minimal test doubles for required dependencies.
-   */
   private fun renderScreen(
     state: LocalFileTransferUiState,
     actionMenuItems: List<ActionMenuItem> = emptyList(),
@@ -102,7 +84,6 @@ class LocalFileTransferScreenTest {
       )
     }
   }
-  // App Bar Title Tests
 
   @Test
   fun localFileTransferScreen_appBar_showsSendTitleWhenSender() {
@@ -119,8 +100,6 @@ class LocalFileTransferScreenTest {
       .onNodeWithText(context.getString(org.kiwix.kiwixmobile.R.string.receive_files_title))
       .assertIsDisplayed()
   }
-
-  // Your Device Header Tests
 
   @Test
   fun localFileTransferScreen_yourDeviceHeader_displaysLabel() {
@@ -145,8 +124,6 @@ class LocalFileTransferScreenTest {
       .onNodeWithText("My Pixel 7")
       .assertIsDisplayed()
   }
-
-  // Nearby Devices Section Tests
 
   @Test
   fun localFileTransferScreen_nearbyDevices_displaysSectionTitle() {
@@ -176,7 +153,7 @@ class LocalFileTransferScreenTest {
   fun localFileTransferScreen_nearbyDevices_showsProgressBarWhenSearching() {
     renderScreen(createTestState(isPeerSearching = true))
     composeTestRule
-      .onNodeWithTag(CONTENT_LOADING_PROGRESSBAR_TESTING_TAG)
+      .onNodeWithTag(CONTENT_LOADING_PROGRESS_BAR_TESTING_TAG)
       .assertIsDisplayed()
   }
 
@@ -218,8 +195,6 @@ class LocalFileTransferScreenTest {
       clickedDevice === device
     )
   }
-
-  // Transfer Files Section Tests
 
   @Test
   fun localFileTransferScreen_transferFiles_displaysSectionTitle() {
@@ -304,8 +279,6 @@ class LocalFileTransferScreenTest {
       .assertIsDisplayed()
   }
 
-  // Combined State Tests
-
   @Test
   fun localFileTransferScreen_displaysAllSectionsSimultaneously() {
     val device = createMockWifiP2pDevice("Peer Device")
@@ -317,7 +290,6 @@ class LocalFileTransferScreenTest {
         transferFiles = listOf(file)
       )
     )
-    // Verify all sections are displayed
     composeTestRule
       .onNodeWithText(context.getString(R.string.your_device))
       .assertIsDisplayed()
@@ -346,12 +318,9 @@ class LocalFileTransferScreenTest {
       .assertIsDisplayed()
   }
 
-  // Showcase Tests
-
   @Test
   fun localFileTransferScreen_showcase_isDisplayedWhenRequested() {
     renderScreen(createTestState(shouldShowShowCase = true))
-    // The showcase is displayed, so the message should be visible.
     composeTestRule
       .onNodeWithTag(SHOWCASE_VIEW_MESSAGE_TESTING_TAG)
       .assertIsDisplayed()
@@ -391,8 +360,6 @@ class LocalFileTransferScreenTest {
 
     assertTrue("Showcase displayed callback should be triggered", showcaseDisplayed)
   }
-
-  // Helper Methods
 
   /**
    * Creates a [WifiP2pDevice] with the given device name.

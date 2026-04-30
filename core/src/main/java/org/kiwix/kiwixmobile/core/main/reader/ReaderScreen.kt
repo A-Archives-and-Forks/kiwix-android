@@ -159,7 +159,6 @@ import org.kiwix.kiwixmobile.core.utils.ComposeDimens.TWELVE_DP
 import org.kiwix.kiwixmobile.core.utils.ComposeDimens.TWO_DP
 import org.kiwix.kiwixmobile.core.utils.HUNDERED
 import org.kiwix.kiwixmobile.core.utils.StyleUtils.fromHtml
-import org.kiwix.kiwixmobile.core.utils.CONTENT_LOADING_PROGRESSBAR_TESTING_TAG
 import org.kiwix.kiwixmobile.core.utils.ZERO
 
 const val TAB_SWITCHER_VIEW_TESTING_TAG = "tabSwitcherViewTestingTag"
@@ -535,9 +534,7 @@ private fun ShowFullScreenView(state: ReaderScreenState) {
 private fun BoxScope.ShowProgressBarIfZIMFilePageIsLoading(state: ReaderScreenState) {
   if (state.pageLoadingItem.first) {
     ContentLoadingProgressBar(
-      modifier = Modifier
-        .testTag(CONTENT_LOADING_PROGRESSBAR_TESTING_TAG)
-        .align(Alignment.TopCenter),
+      modifier = Modifier.align(Alignment.TopCenter),
       progressBarStyle = ProgressBarStyle.HORIZONTAL,
       progress = state.pageLoadingItem.second
     )
