@@ -55,33 +55,33 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarResult
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
-import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.runtime.remember
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
+import androidx.compose.material3.Text
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.res.stringResource
 import androidx.core.app.ActivityCompat
-import androidx.core.content.pm.ShortcutManagerCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.pm.ShortcutManagerCompat
 import androidx.core.net.toUri
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
@@ -129,7 +129,6 @@ import org.kiwix.kiwixmobile.core.main.CoreSearchWidget
 import org.kiwix.kiwixmobile.core.main.CoreWebViewClient
 import org.kiwix.kiwixmobile.core.main.DocumentParser
 import org.kiwix.kiwixmobile.core.main.DocumentParser.SectionsListener
-import org.kiwix.kiwixmobile.core.main.FIND_IN_PAGE_SEARCH_STRING
 import org.kiwix.kiwixmobile.core.main.KiwixTextToSpeech
 import org.kiwix.kiwixmobile.core.main.KiwixTextToSpeech.OnInitSucceedListener
 import org.kiwix.kiwixmobile.core.main.KiwixTextToSpeech.OnSpeakingListener
@@ -157,9 +156,8 @@ import org.kiwix.kiwixmobile.core.search.viewmodel.effects.SearchItemToOpen
 import org.kiwix.kiwixmobile.core.ui.components.NavigationIcon
 import org.kiwix.kiwixmobile.core.ui.models.IconItem
 import org.kiwix.kiwixmobile.core.ui.theme.White
-import org.kiwix.kiwixmobile.core.utils.ComposeDimens.EIGHT_DP
-
 import org.kiwix.kiwixmobile.core.utils.ComposeDimens.BACK_TO_TOP_HIDE_DELAY_MS
+import org.kiwix.kiwixmobile.core.utils.ComposeDimens.EIGHT_DP
 import org.kiwix.kiwixmobile.core.utils.DonationDialogHandler
 import org.kiwix.kiwixmobile.core.utils.DonationDialogHandler.ShowDonationDialogCallback
 import org.kiwix.kiwixmobile.core.utils.ExternalLinkOpener
@@ -168,6 +166,8 @@ import org.kiwix.kiwixmobile.core.utils.LanguageUtils
 import org.kiwix.kiwixmobile.core.utils.LanguageUtils.Companion.getCurrentLocale
 import org.kiwix.kiwixmobile.core.utils.REQUEST_POST_NOTIFICATION_PERMISSION
 import org.kiwix.kiwixmobile.core.utils.REQUEST_STORAGE_PERMISSION
+import org.kiwix.kiwixmobile.core.utils.ShortcutResult
+import org.kiwix.kiwixmobile.core.utils.ShortcutUtils
 import org.kiwix.kiwixmobile.core.utils.StyleUtils.getAttributes
 import org.kiwix.kiwixmobile.core.utils.TAG_FILE_SEARCHED
 import org.kiwix.kiwixmobile.core.utils.TAG_FILE_SEARCHED_NEW_TAB
@@ -183,8 +183,6 @@ import org.kiwix.kiwixmobile.core.utils.files.FileUtils
 import org.kiwix.kiwixmobile.core.utils.files.FileUtils.deleteCachedFiles
 import org.kiwix.kiwixmobile.core.utils.files.FileUtils.readFile
 import org.kiwix.kiwixmobile.core.utils.files.Log
-import org.kiwix.kiwixmobile.core.utils.ShortcutResult
-import org.kiwix.kiwixmobile.core.utils.ShortcutUtils
 import org.kiwix.kiwixmobile.core.utils.titleToUrl
 import org.kiwix.kiwixmobile.core.utils.urlSuffixToParsableUrl
 import org.kiwix.libkiwix.Book
@@ -241,11 +239,10 @@ abstract class CoreReaderFragment :
   @JvmField
   @Inject
   var donationDialogHandler: DonationDialogHandler? = null
-  protected var currentWebViewIndex by mutableStateOf(0)
+  protected var currentWebViewIndex by mutableIntStateOf(0)
   private var currentTtsWebViewIndex = 0
   private val savingTabsMutex = Mutex()
   private var searchItemToOpen: SearchItemToOpen? = null
-  private var findInPageTitle: String? = null
 
   @JvmField
   @Inject
@@ -564,11 +561,6 @@ abstract class CoreReaderFragment :
           readAloudService?.registerCallBack(this@CoreReaderFragment)
         }
       }
-    requireActivity().observeNavigationResult<String>(
-      FIND_IN_PAGE_SEARCH_STRING,
-      viewLifecycleOwner,
-      Observer(::storeFindInPageTitle)
-    )
     requireActivity().observeNavigationResult<SearchItemToOpen>(
       TAG_FILE_SEARCHED,
       viewLifecycleOwner,
@@ -1137,7 +1129,6 @@ abstract class CoreReaderFragment :
 
   private fun destroyViews() {
     libkiwixBook = null
-    findInPageTitle = null
     searchItemToOpen = null
     pendingIntent = null
     try {
@@ -1472,6 +1463,22 @@ abstract class CoreReaderFragment :
       if (requestExternalStorageWritePermissionForNotes()) {
         showAddNoteDialog()
       }
+    }
+  }
+
+  /**
+   * Initiates the "find in page" UI for searching within the current WebView content.
+   * If the `compatCallback` is active, it sets up the WebView to search for the
+   * specified title and displays the search input UI.
+   */
+  override fun onFindInPageMenuClicked() {
+    compatCallback?.apply {
+      setActive()
+      setWebView(getCurrentWebView())
+      (activity as AppCompatActivity?)?.startSupportActionMode(this)
+      setText("")
+      findAll()
+      showSoftInput()
     }
   }
 
@@ -2199,35 +2206,6 @@ abstract class CoreReaderFragment :
   }
 
   /**
-   * Stores the given title for a "find in page" search operation.
-   * This title is used later when triggering the "find in page" functionality.
-   *
-   * @param title The title or keyword to search for within the current WebView content.
-   */
-  private fun storeFindInPageTitle(title: String) {
-    findInPageTitle = title
-  }
-
-  /**
-   * Initiates the "find in page" UI for searching within the current WebView content.
-   * If the `compatCallback` is active, it sets up the WebView to search for the
-   * specified title and displays the search input UI.
-   *
-   * @param title The search term or keyword to locate within the page. If null, no action is taken.
-   */
-  private fun findInPage(title: String?) {
-    // if the search is localized trigger find in page UI.
-    compatCallback?.apply {
-      setActive()
-      setWebView(getCurrentWebView())
-      (activity as AppCompatActivity?)?.startSupportActionMode(this)
-      setText(title)
-      findAll()
-      showSoftInput()
-    }
-  }
-
-  /**
    * Creates the main menu for the reader.
    * Subclasses may override this method to customize the main menu creation process.
    * For custom apps like CustomReaderFragment, this method dynamically generates the menu
@@ -2615,13 +2593,10 @@ abstract class CoreReaderFragment :
         // This lambda is executed after the tabs have been restored. It checks if there is a
         // search item to open. If `searchItemToOpen` is not null, it calls `openSearchItem`
         // to open the specified item, then sets `searchItemToOpen` to null to prevent
-        // any unexpected behavior on future calls. Similarly, if `findInPageTitle` is set,
-        // it invokes `findInPage` and resets `findInPageTitle` to null.
+        // any unexpected behavior on future calls.
         isWebViewHistoryRestoring = false
         searchItemToOpen?.let(::openSearchItem)
         searchItemToOpen = null
-        findInPageTitle?.let(::findInPage)
-        findInPageTitle = null
         handlePendingIntent()
         // When the restoration completes than save the tabs history.
         saveTabStates()

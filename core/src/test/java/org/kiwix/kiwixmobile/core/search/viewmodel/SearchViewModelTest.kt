@@ -45,7 +45,6 @@ import org.kiwix.kiwixmobile.core.reader.ZimFileReader
 import org.kiwix.kiwixmobile.core.reader.ZimReaderContainer
 import org.kiwix.kiwixmobile.core.search.SearchListItem.RecentSearchListItem
 import org.kiwix.kiwixmobile.core.search.viewmodel.Action.ActivityResultReceived
-import org.kiwix.kiwixmobile.core.search.viewmodel.Action.ClickedSearchInText
 import org.kiwix.kiwixmobile.core.search.viewmodel.Action.ConfirmedDelete
 import org.kiwix.kiwixmobile.core.search.viewmodel.Action.CreatedWithArguments
 import org.kiwix.kiwixmobile.core.search.viewmodel.Action.ExitedSearch
@@ -63,7 +62,6 @@ import org.kiwix.kiwixmobile.core.search.viewmodel.effects.PopFragmentBackstack
 import org.kiwix.kiwixmobile.core.search.viewmodel.effects.ProcessActivityResult
 import org.kiwix.kiwixmobile.core.search.viewmodel.effects.SaveSearchToRecents
 import org.kiwix.kiwixmobile.core.search.viewmodel.effects.SearchArgumentProcessing
-import org.kiwix.kiwixmobile.core.search.viewmodel.effects.SearchInPreviousScreen
 import org.kiwix.kiwixmobile.core.search.viewmodel.effects.ShowDeleteSearchDialog
 import org.kiwix.kiwixmobile.core.search.viewmodel.effects.ShowToast
 import org.kiwix.kiwixmobile.core.search.viewmodel.effects.StartSpeechInput
@@ -219,22 +217,6 @@ internal class SearchViewModelTest {
           cancelAndIgnoreRemainingEvents()
         }
       }
-
-    @Test
-    fun onSearchValueChanged_whenNonBlank_returnsFindInPageMenuItemIsEnabled() = runTest {
-      viewModel.onSearchValueChanged("kiwix")
-      advanceUntilIdle()
-      assertThat(viewModel.uiState.value.findInPageMenuItem.first).isTrue()
-    }
-
-    @Test
-    fun onSearchClear_whenCalled_returnsFindInPageMenuItemIsDisabled() = runTest {
-      viewModel.onSearchValueChanged("hello")
-      advanceUntilIdle()
-      viewModel.onSearchClear()
-      advanceUntilIdle()
-      assertThat(viewModel.uiState.value.findInPageMenuItem.first).isFalse()
-    }
 
     @Test
     fun onSearchValueChanged_whenCalled_returnsUpdatedSearchText() = runTest {
@@ -415,12 +397,6 @@ internal class SearchViewModelTest {
           OnItemLongClick(searchListItem),
           ShowDeleteSearchDialog(searchListItem, viewModel.actions, dialogShower)
         )
-      }
-
-    @Test
-    fun `ClickedSearchInText offers SearchInPreviousScreen`() =
-      runTest {
-        actionResultsInEffects(ClickedSearchInText, SearchInPreviousScreen(""))
       }
 
     @Test

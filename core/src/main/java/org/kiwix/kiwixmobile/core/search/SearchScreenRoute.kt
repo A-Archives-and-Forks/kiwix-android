@@ -18,13 +18,11 @@
 
 package org.kiwix.kiwixmobile.core.search
 
-import android.content.Context
 import android.os.Bundle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -32,7 +30,6 @@ import org.kiwix.kiwixmobile.core.R
 import org.kiwix.kiwixmobile.core.extensions.CollectSideEffectWithActivity
 import org.kiwix.kiwixmobile.core.main.CoreMainActivity
 import org.kiwix.kiwixmobile.core.search.viewmodel.Action
-import org.kiwix.kiwixmobile.core.search.viewmodel.SearchScreenUiState
 import org.kiwix.kiwixmobile.core.search.viewmodel.SearchViewModel
 import org.kiwix.kiwixmobile.core.ui.components.NavigationIcon
 import org.kiwix.kiwixmobile.core.ui.models.ActionMenuItem
@@ -49,7 +46,6 @@ fun SearchScreenRoute(
   arguments: Bundle?,
   coreMainActivity: CoreMainActivity
 ) {
-  val context = LocalContext.current
   val viewModel: SearchViewModel = viewModel(factory = viewModelFactory)
   val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -86,7 +82,7 @@ fun SearchScreenRoute(
   SearchScreen(
     uiState,
     viewModel,
-    buildActionMenuItems(viewModel, uiState, context),
+    buildActionMenuItems(viewModel),
     {
       NavigationIcon(
         onClick = {
@@ -98,12 +94,8 @@ fun SearchScreenRoute(
   )
 }
 
-private fun buildActionMenuItems(
-  viewModel: SearchViewModel,
-  uiState: SearchScreenUiState,
-  context: Context
-): List<ActionMenuItem> {
-  return listOfNotNull(
+private fun buildActionMenuItems(viewModel: SearchViewModel): List<ActionMenuItem> {
+  return listOf(
     ActionMenuItem(
       contentDescription = R.string.search_label,
       icon = IconItem.Drawable(R.drawable.ic_mic_black_24dp),
@@ -112,22 +104,6 @@ private fun buildActionMenuItems(
       onClick = {
         viewModel.actions.tryEmit(Action.ReceivedPromptForSpeechInput)
       }
-    ),
-    if (uiState.findInPageMenuItem.second) {
-      // Check if the `FIND_IN_PAGE` is visible or not.
-      // If visible then show it in menu.
-      ActionMenuItem(
-        contentDescription = R.string.menu_search_in_text,
-        iconButtonText = context.getString(R.string.menu_search_in_text),
-        testingTag = FIND_IN_PAGE_TESTING_TAG,
-        isEnabled = uiState.findInPageMenuItem.first,
-        onClick = {
-          viewModel.actions.tryEmit(Action.ClickedSearchInText)
-        }
-      )
-    } else {
-      // If `FIND_IN_PAGE` is not visible return null so that it will not show on the menu item.
-      null
-    }
+    )
   )
 }

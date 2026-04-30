@@ -92,7 +92,6 @@ import org.kiwix.kiwixmobile.core.utils.ZERO
 
 const val SEARCH_FIELD_TESTING_TAG = "searchFieldTestingTag"
 const val NO_SEARCH_RESULT_TESTING_TAG = "noSearchResultTestingTag"
-const val FIND_IN_PAGE_TESTING_TAG = "findInPageTestingTag"
 const val SEARCH_ITEM_TESTING_TAG = "searchItemTestingTag"
 const val OPEN_ITEM_IN_NEW_TAB_ICON_TESTING_TAG = "openItemInNewTagIconTestingTag"
 const val LOADING_ITEMS_BEFORE = 3
