@@ -128,7 +128,7 @@ class SearchScreenInstrumentTest : BaseActivityTest() {
   }
 
   @Test
-  fun searchFragmentSimple() {
+  fun searchScreenSimple() {
     activityScenario.onActivity {
       kiwixMainActivity = it
       kiwixMainActivity.navigate(KiwixDestination.Library.route)

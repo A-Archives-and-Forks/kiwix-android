@@ -30,6 +30,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -58,6 +59,7 @@ const val SHARE_ARTICLE_MENU_ITEM_TESTING_TAG = "shareArticleMenuItemTestingTag"
 const val TAB_MENU_ITEM_TESTING_TAG = "tabMenuItemTestingTag"
 const val TABS_SIZE_TEXT_TESTING_TAG = "tabsSizeTextTestingTag"
 const val ADD_TO_HOME_SCREEN_MENU_ITEM_TESTING_TAG = "addToHomeScreenMenuItemTestingTag"
+const val FIND_IN_PAGE_MENU_ITEM_TESTING_TAG = "findInPageTestingTag"
 
 @Stable
 class ReaderMenuState(
@@ -77,6 +79,7 @@ class ReaderMenuState(
     fun onReadAloudMenuClicked()
     fun onSearchMenuClickedMenuClicked()
     fun onAddToHomeScreenMenuClicked()
+    fun onFindInPageMenuClicked()
   }
 
   val menuItems = mutableStateListOf<ActionMenuItem>()
@@ -89,6 +92,7 @@ class ReaderMenuState(
     put(MenuItemType.RandomArticle, true)
     put(MenuItemType.ReadAloud, true)
     put(MenuItemType.AddToHomeScreen, true)
+    put(MenuItemType.FindInPage, true)
   }
 
   var isInTabSwitcher by mutableStateOf(false)
@@ -96,7 +100,7 @@ class ReaderMenuState(
 
   private var isReadingAloud by mutableStateOf(false)
 
-  private var webViewCount by mutableStateOf(0)
+  private var webViewCount by mutableIntStateOf(0)
   private var urlIsValid by mutableStateOf(false)
 
   fun updateTabIcon(count: Int) {
@@ -119,7 +123,8 @@ class ReaderMenuState(
       MenuItemType.Share,
       MenuItemType.AddNote,
       MenuItemType.TabSwitcher,
-      MenuItemType.AddToHomeScreen
+      MenuItemType.AddToHomeScreen,
+      MenuItemType.FindInPage
     )
   }
 
@@ -146,7 +151,8 @@ class ReaderMenuState(
       MenuItemType.RandomArticle,
       MenuItemType.AddNote,
       MenuItemType.ReadAloud,
-      MenuItemType.AddToHomeScreen
+      MenuItemType.AddToHomeScreen,
+      MenuItemType.FindInPage
     )
   }
 
@@ -159,7 +165,8 @@ class ReaderMenuState(
       MenuItemType.RandomArticle,
       MenuItemType.AddNote,
       MenuItemType.ReadAloud,
-      MenuItemType.AddToHomeScreen
+      MenuItemType.AddToHomeScreen,
+      MenuItemType.FindInPage
     )
   }
 
@@ -171,7 +178,8 @@ class ReaderMenuState(
       MenuItemType.ReadAloud,
       MenuItemType.Share,
       MenuItemType.AddNote,
-      MenuItemType.AddToHomeScreen
+      MenuItemType.AddToHomeScreen,
+      MenuItemType.FindInPage
     )
   }
 
@@ -264,6 +272,15 @@ class ReaderMenuState(
   }
 
   private fun addReaderMenuItems() {
+    if (menuItemVisibility[MenuItemType.FindInPage] == true) {
+      menuItems += ActionMenuItem(
+        contentDescription = R.string.menu_search_in_text,
+        onClick = { menuClickListener.onFindInPageMenuClicked() },
+        testingTag = FIND_IN_PAGE_MENU_ITEM_TESTING_TAG,
+        isInOverflow = true
+      )
+    }
+
     if (menuItemVisibility[MenuItemType.Share] == true) {
       menuItems += ActionMenuItem(
         contentDescription = R.string.share_article,
@@ -323,5 +340,6 @@ enum class MenuItemType {
   AddNote,
   RandomArticle,
   ReadAloud,
-  AddToHomeScreen
+  AddToHomeScreen,
+  FindInPage
 }

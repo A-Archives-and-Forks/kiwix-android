@@ -82,17 +82,6 @@ class SearchScreenUITest {
     onClick = onClick
   )
 
-  private fun findInPageActionMenuItem(
-    isEnabled: Boolean = true,
-    onClick: () -> Unit = {}
-  ) = ActionMenuItem(
-    contentDescription = R.string.menu_search_in_text,
-    iconButtonText = context.getString(R.string.menu_search_in_text),
-    testingTag = FIND_IN_PAGE_TESTING_TAG,
-    isEnabled = isEnabled,
-    onClick = onClick
-  )
-
   @Test
   fun searchScreen_whenScreenLaunched_searchFieldIsDisplayed() {
     mockSearchScreenContent()
@@ -280,32 +269,6 @@ class SearchScreenUITest {
       .onNodeWithTag(VOICE_SEARCH_TESTING_TAG)
       .performClick()
     assertTrue("Voice search callback should be triggered", clicked)
-  }
-
-  @Test
-  fun searchScreen_whenFindInPageMenuItemPresent_isDisplayed() {
-    mockSearchScreenContent(actionMenuItems = listOf(findInPageActionMenuItem()))
-    composeTestRule
-      .onNodeWithTag(FIND_IN_PAGE_TESTING_TAG)
-      .assertIsDisplayed()
-  }
-
-  @Test
-  fun searchScreen_whenFindInPageMenuItemNotInList_doesNotExist() {
-    mockSearchScreenContent(actionMenuItems = emptyList())
-    composeTestRule
-      .onNodeWithTag(FIND_IN_PAGE_TESTING_TAG)
-      .assertDoesNotExist()
-  }
-
-  @Test
-  fun searchScreen_whenFindInPageMenuItemClicked_callbackIsTriggered() {
-    var clicked = false
-    mockSearchScreenContent(actionMenuItems = listOf(findInPageActionMenuItem { clicked = true }))
-    composeTestRule
-      .onNodeWithTag(FIND_IN_PAGE_TESTING_TAG)
-      .performClick()
-    assertTrue("Find in page callback should be triggered", clicked)
   }
 
   @Test

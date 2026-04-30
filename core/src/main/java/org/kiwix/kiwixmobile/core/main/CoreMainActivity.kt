@@ -84,7 +84,6 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 const val KIWIX_SUPPORT_URL = "https://donate.kiwix.org"
 const val PAGE_URL_KEY = "pageUrl"
 const val SHOULD_OPEN_IN_NEW_TAB = "shouldOpenInNewTab"
-const val FIND_IN_PAGE_SEARCH_STRING = "findInPageSearchString"
 const val ZIM_FILE_URI_KEY = "zimFileUri"
 const val KIWIX_INTERNAL_ERROR = 10
 const val ACTION_NEW_TAB = "NEW_TAB"

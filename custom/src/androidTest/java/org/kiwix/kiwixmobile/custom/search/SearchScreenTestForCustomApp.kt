@@ -131,7 +131,7 @@ class SearchScreenTestForCustomApp {
   }
 
   @Test
-  fun searchFragment() {
+  fun searchScreen() {
     activityScenario.onActivity {
       customMainActivity = it
     }

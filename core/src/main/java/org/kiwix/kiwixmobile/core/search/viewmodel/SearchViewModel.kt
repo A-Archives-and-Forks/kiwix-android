@@ -42,7 +42,6 @@ import org.kiwix.kiwixmobile.core.di.IoDispatcher
 import org.kiwix.kiwixmobile.core.reader.ZimReaderContainer
 import org.kiwix.kiwixmobile.core.search.SearchListItem
 import org.kiwix.kiwixmobile.core.search.viewmodel.Action.ActivityResultReceived
-import org.kiwix.kiwixmobile.core.search.viewmodel.Action.ClickedSearchInText
 import org.kiwix.kiwixmobile.core.search.viewmodel.Action.ConfirmedDelete
 import org.kiwix.kiwixmobile.core.search.viewmodel.Action.CreatedWithArguments
 import org.kiwix.kiwixmobile.core.search.viewmodel.Action.ExitedSearch
@@ -62,7 +61,6 @@ import org.kiwix.kiwixmobile.core.search.viewmodel.effects.PopFragmentBackstack
 import org.kiwix.kiwixmobile.core.search.viewmodel.effects.ProcessActivityResult
 import org.kiwix.kiwixmobile.core.search.viewmodel.effects.SaveSearchToRecents
 import org.kiwix.kiwixmobile.core.search.viewmodel.effects.SearchArgumentProcessing
-import org.kiwix.kiwixmobile.core.search.viewmodel.effects.SearchInPreviousScreen
 import org.kiwix.kiwixmobile.core.search.viewmodel.effects.ShowDeleteSearchDialog
 import org.kiwix.kiwixmobile.core.search.viewmodel.effects.ShowToast
 import org.kiwix.kiwixmobile.core.search.viewmodel.effects.StartSpeechInput
@@ -162,9 +160,7 @@ class SearchViewModel @Inject constructor(
           searchState = searchState,
           searchList = firstPage,
           spellingCorrectionSuggestions = suggestions,
-          isLoading = false,
-          findInPageMenuItem =
-            searchState.searchTerm.isNotBlank() to (searchOrigin.value == FromWebView)
+          isLoading = false
         )
       }
     }.collect {
@@ -211,7 +207,6 @@ class SearchViewModel @Inject constructor(
         is OnOpenInNewTabClick -> saveSearchAndOpenItem(it.searchListItem, true)
         is OnItemLongClick -> showDeleteDialog(it)
         is Filter -> filter.tryEmit(it.term)
-        ClickedSearchInText -> searchPreviousScreenWhenStateIsValid()
         is ConfirmedDelete -> deleteItemAndShowToast(it)
         is CreatedWithArguments ->
           _effects.tryEmit(
@@ -249,9 +244,6 @@ class SearchViewModel @Inject constructor(
     )
     _effects.tryEmit(ShowToast(R.string.delete_specific_search_toast))
   }
-
-  private fun searchPreviousScreenWhenStateIsValid(): Any =
-    _effects.tryEmit(SearchInPreviousScreen(uiState.value.searchState.searchTerm))
 
   private fun showDeleteDialog(longClick: OnItemLongClick) {
     _effects.tryEmit(
@@ -309,12 +301,6 @@ class SearchViewModel @Inject constructor(
     updateUiState { updatedState }
   }
 
-  private fun setIsPageSearchEnabled(searchText: String) {
-    updateUiState {
-      it.copy(findInPageMenuItem = searchText.isNotBlank() to it.findInPageMenuItem.second)
-    }
-  }
-
   fun onItemClick(it: SearchListItem) {
     closeKeyboard()
     actions.tryEmit(OnItemClick(it))
@@ -332,12 +318,10 @@ class SearchViewModel @Inject constructor(
 
   fun onSearchClear() {
     updateSearchQuery("")
-    setIsPageSearchEnabled("")
   }
 
   fun onSearchValueChanged(searchText: String) {
     updateSearchQuery(searchText)
-    setIsPageSearchEnabled(searchText)
   }
 
   fun onSuggestionItemClick(suggestionText: String) {
@@ -376,14 +360,6 @@ data class SearchScreenUiState(
   val isLoading: Boolean = false,
   val isLoadingMore: Boolean = false,
   val spellingCorrectionSuggestions: List<String> = emptyList(),
-  /**
-   * Represents the state of the FIND_IN_PAGE menu item.
-   *
-   * A [Pair] containing:
-   *  - [Boolean]: Whether the menu item is enabled (clickable).
-   *  - [Boolean]: Whether the menu item is visible.
-   */
-  val findInPageMenuItem: Pair<Boolean, Boolean> = false to true,
   val searchOrigin: SearchOrigin = FromWebView,
   val searchState: SearchState = SearchState(
     "",
