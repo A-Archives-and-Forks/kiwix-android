@@ -534,8 +534,7 @@ private fun ShowFullScreenView(state: ReaderScreenState) {
 private fun BoxScope.ShowProgressBarIfZIMFilePageIsLoading(state: ReaderScreenState) {
   if (state.pageLoadingItem.first) {
     ContentLoadingProgressBar(
-      modifier = Modifier
-        .align(Alignment.TopCenter),
+      modifier = Modifier.align(Alignment.TopCenter),
       progressBarStyle = ProgressBarStyle.HORIZONTAL,
       progress = state.pageLoadingItem.second
     )

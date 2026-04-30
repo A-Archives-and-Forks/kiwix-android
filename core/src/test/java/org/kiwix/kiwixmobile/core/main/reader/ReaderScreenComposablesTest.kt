@@ -42,11 +42,11 @@ import org.junit.runner.RunWith
 import org.kiwix.kiwixmobile.core.R
 import org.kiwix.kiwixmobile.core.base.FragmentActivityExtensions
 import org.kiwix.kiwixmobile.core.main.KiwixWebView
+import org.kiwix.kiwixmobile.core.ui.components.CONTENT_LOADING_PROGRESS_BAR_TESTING_TAG
 import org.kiwix.kiwixmobile.core.ui.models.IconItem
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
-import org.kiwix.kiwixmobile.core.utils.CONTENT_LOADING_PROGRESSBAR_TESTING_TAG
 
 /**
  * Behavior-driven UI tests for ReaderScreen.
@@ -526,7 +526,7 @@ class ReaderScreenComposablesTest {
       )
     )
     composeTestRule
-      .onNodeWithTag(CONTENT_LOADING_PROGRESSBAR_TESTING_TAG)
+      .onNodeWithTag(CONTENT_LOADING_PROGRESS_BAR_TESTING_TAG)
       .assertIsDisplayed()
   }
 
@@ -538,7 +538,7 @@ class ReaderScreenComposablesTest {
       )
     )
     composeTestRule
-      .onNodeWithTag(CONTENT_LOADING_PROGRESSBAR_TESTING_TAG)
+      .onNodeWithTag(CONTENT_LOADING_PROGRESS_BAR_TESTING_TAG)
       .assertDoesNotExist()
   }
 

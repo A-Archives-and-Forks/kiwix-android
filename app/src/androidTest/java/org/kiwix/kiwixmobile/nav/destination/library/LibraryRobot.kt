@@ -35,7 +35,7 @@ import org.kiwix.kiwixmobile.BaseRobot
 import org.kiwix.kiwixmobile.Findable.ViewId
 import org.kiwix.kiwixmobile.R
 import org.kiwix.kiwixmobile.core.R.string
-import org.kiwix.kiwixmobile.core.utils.CONTENT_LOADING_PROGRESSBAR_TESTING_TAG
+import org.kiwix.kiwixmobile.core.ui.components.CONTENT_LOADING_PROGRESS_BAR_TESTING_TAG
 import org.kiwix.kiwixmobile.core.utils.ZERO
 import org.kiwix.kiwixmobile.core.utils.dialog.ALERT_DIALOG_CONFIRM_BUTTON_TESTING_TAG
 import org.kiwix.kiwixmobile.core.utils.dialog.ALERT_DIALOG_DISMISS_BUTTON_TESTING_TAG
@@ -116,7 +116,7 @@ class LibraryRobot : BaseRobot() {
   fun waitUntilZimFilesRefreshing(composeTestRule: ComposeContentTestRule) {
     testFlakyView({
       composeTestRule.waitUntilTimeout()
-      composeTestRule.onNodeWithTag(CONTENT_LOADING_PROGRESSBAR_TESTING_TAG)
+      composeTestRule.onNodeWithTag(CONTENT_LOADING_PROGRESS_BAR_TESTING_TAG)
         .assertIsNotDisplayed()
     })
   }

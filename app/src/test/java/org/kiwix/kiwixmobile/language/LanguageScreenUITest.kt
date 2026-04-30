@@ -30,6 +30,7 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTextInput
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -195,13 +196,16 @@ class LanguageScreenUITest {
 
   @Test
   fun languageScreen_whenUserTypesInSearchField_queryIsDisplayed() {
+    var query = ""
     mockLanguageScreen(
       isSearchActive = true,
-      searchText = "English"
+      onAppBarValueChange = { query = it }
     )
     composeTestRule
-      .onNodeWithText("English")
-      .assertIsDisplayed()
+      .onNodeWithTag(SEARCH_FIELD_TESTING_TAG)
+      .performTextInput("eng")
+    composeTestRule.waitForIdle()
+    assertTrue(query == "eng")
   }
 
   @Test
