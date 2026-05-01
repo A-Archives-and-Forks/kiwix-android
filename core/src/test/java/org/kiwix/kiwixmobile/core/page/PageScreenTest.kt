@@ -22,7 +22,9 @@ import android.os.Build
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.assertTextEquals
+import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.isToggleable
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.longClick
@@ -30,8 +32,11 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTouchInput
 import com.jakewharton.threetenabp.AndroidThreeTen
+import org.threeten.bp.LocalDate
+import org.threeten.bp.format.DateTimeFormatter
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -411,6 +416,66 @@ class PageScreenTest {
     renderPageScreen(state = state)
     composeTestRule
       .onNodeWithText("01 Jan 2000")
+      .assertIsDisplayed()
+  }
+
+  @Test
+  fun searchTextChange_triggersCallback() {
+    var capturedText = ""
+    renderPageScreen(
+      isSearchBarActive = true,
+      onSearchTextChange = { capturedText = it }
+    )
+    composeTestRule.onNode(hasSetTextAction())
+      .performTextInput("test")
+    assertEquals("test", capturedText)
+  }
+
+  @Test
+  fun clearingSearch_callsOnClearSearch() {
+    var clearCalled = false
+    renderPageScreen(
+      isSearchBarActive = true,
+      searchText = "some text",
+      onClearSearch = { clearCalled = true }
+    )
+    composeTestRule.onNodeWithContentDescription(context.getString(R.string.searchview_description_clear))
+      .performClick()
+    assertTrue("onClearSearch should be called", clearCalled)
+  }
+
+  @Test
+  fun searchBar_visibility_logic() {
+    // 1. Not active, not in selection mode -> Not visible
+    renderPageScreen(isSearchBarActive = false, isInSelectionMode = false)
+    composeTestRule.onNode(hasSetTextAction()).assertDoesNotExist()
+
+    // 2. Active, not in selection mode -> Visible
+    renderPageScreen(isSearchBarActive = true, isInSelectionMode = false)
+    composeTestRule.onNode(hasSetTextAction()).assertIsDisplayed()
+
+    // 3. Active, in selection mode -> Not visible (Selection mode takes precedence)
+    renderPageScreen(isSearchBarActive = true, isInSelectionMode = true)
+    composeTestRule.onNode(hasSetTextAction()).assertDoesNotExist()
+  }
+
+  @Test
+  fun switchRow_disabledInSelectionMode() {
+    renderPageScreen(isInSelectionMode = true)
+    composeTestRule.onNode(isToggleable())
+      .assertIsNotEnabled()
+  }
+
+  @Test
+  fun dateItem_todayLabelDisplayed() {
+    val today = LocalDate.now().format(DateTimeFormatter.ofPattern("d MMM yyyy"))
+    val dateItem = HistoryListItem.DateItem(today)
+    renderPageScreen(
+      state = TestPageStateWithDateItems(
+        customVisibleItems = listOf(dateItem)
+      )
+    )
+    composeTestRule.onNodeWithText(context.getString(R.string.time_today))
       .assertIsDisplayed()
   }
 
