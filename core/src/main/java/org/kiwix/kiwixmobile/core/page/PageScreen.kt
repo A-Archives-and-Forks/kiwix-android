@@ -98,6 +98,7 @@ const val NO_ITEMS_TEXT_TESTING_TAG = "noItemsTextTestingTag"
 const val PAGE_LIST_TEST_TAG = "pageListTestingTag"
 const val SEARCH_ICON_TESTING_TAG = "searchIconTestingTag"
 const val DELETE_MENU_ICON_TESTING_TAG = "deleteMenuIconTestingTag"
+const val DATE_ITEM_TEXT_TESTING_TAG = "dateItemTextTestingTag"
 
 @Suppress("LongMethod", "LongParameterList")
 @Composable
@@ -248,7 +249,7 @@ fun <T : Page, S : PageState<T>> PageScreen(
           )
           PageSwitchRow(
             switchString = switchString,
-            switchIsEnabled = !state.isInSelectionState,
+            switchIsEnabled = !isInSelectionMode,
             switchIsCheckedFlow = switchIsCheckedFlow,
             onSwitchCheckedChange = onSwitchCheckedChange,
             isCustomApp = isCustomApp
@@ -361,7 +362,9 @@ fun DateItemText(dateItem: DateItem) {
   Text(
     text = getFormattedDateLabel(dateItem.dateString),
     style = MaterialTheme.typography.bodySmall,
-    modifier = Modifier.padding(SIXTEEN_DP)
+    modifier = Modifier
+      .padding(SIXTEEN_DP)
+      .testTag(DATE_ITEM_TEXT_TESTING_TAG)
   )
 }
 
@@ -380,7 +383,7 @@ private fun getFormattedDateLabel(dateString: String): String {
 
 private fun parseDateSafely(dateString: String): LocalDate? {
   return try {
-    LocalDate.parse(dateString, DateTimeFormatter.ofPattern("d MMM yyyy"))
+    LocalDate.parse(dateString, DateTimeFormatter.ofPattern("d MMM yyyy", java.util.Locale.US))
   } catch (_: DateTimeParseException) {
     null
   }

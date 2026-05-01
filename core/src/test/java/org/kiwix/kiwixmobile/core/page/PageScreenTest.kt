@@ -422,12 +422,15 @@ class PageScreenTest {
   @Test
   fun searchTextChange_triggersCallback() {
     var capturedText = ""
+    val searchQueryHint = "Search…"
     renderPageScreen(
       isSearchBarActive = true,
+      searchQueryHint = searchQueryHint,
       onSearchTextChange = { capturedText = it }
     )
-    composeTestRule.onNode(hasSetTextAction())
+    composeTestRule.onNodeWithContentDescription(searchQueryHint)
       .performTextInput("test")
+    composeTestRule.waitForIdle()
     assertEquals("test", capturedText)
   }
 
@@ -445,38 +448,52 @@ class PageScreenTest {
   }
 
   @Test
-  fun searchBar_visibility_logic() {
-    // 1. Not active, not in selection mode -> Not visible
+  fun searchBar_notVisibleByDefault() {
     renderPageScreen(isSearchBarActive = false, isInSelectionMode = false)
     composeTestRule.onNode(hasSetTextAction()).assertDoesNotExist()
+  }
 
-    // 2. Active, not in selection mode -> Visible
+  @Test
+  fun searchBar_visibleWhenActive() {
     renderPageScreen(isSearchBarActive = true, isInSelectionMode = false)
     composeTestRule.onNode(hasSetTextAction()).assertIsDisplayed()
+  }
 
-    // 3. Active, in selection mode -> Not visible (Selection mode takes precedence)
+  @Test
+  fun searchBar_hiddenInSelectionMode() {
     renderPageScreen(isSearchBarActive = true, isInSelectionMode = true)
     composeTestRule.onNode(hasSetTextAction()).assertDoesNotExist()
   }
 
   @Test
   fun switchRow_disabledInSelectionMode() {
-    renderPageScreen(isInSelectionMode = true)
+    val selectedPage = TestPage(isSelected = true)
+    renderPageScreen(
+      state = TestPageState(pageItems = listOf(selectedPage)),
+      isInSelectionMode = true
+    )
     composeTestRule.onNode(isToggleable())
       .assertIsNotEnabled()
   }
 
   @Test
   fun dateItem_todayLabelDisplayed() {
-    val today = LocalDate.now().format(DateTimeFormatter.ofPattern("d MMM yyyy"))
+    // Use US locale to match Robolectric default for parsing/formatting
+    val today = LocalDate.now().format(DateTimeFormatter.ofPattern("d MMM yyyy", java.util.Locale.US))
     val dateItem = HistoryListItem.DateItem(today)
+    // pageItems must be non-empty so PageScreen renders the PageList
+    // (it checks state.pageItems.isEmpty() to decide list vs empty state)
+    val dummyPage = TestPage(title = "Dummy", id = 1L)
     renderPageScreen(
       state = TestPageStateWithDateItems(
-        customVisibleItems = listOf(dateItem)
+        pageItems = listOf(dummyPage),
+        customVisibleItems = listOf(dateItem, dummyPage)
       )
     )
-    composeTestRule.onNodeWithText(context.getString(R.string.time_today))
+    composeTestRule.waitForIdle()
+    composeTestRule.onNodeWithTag("dateItemTextTestingTag")
       .assertIsDisplayed()
+      .assertTextEquals(context.getString(R.string.time_today))
   }
 
   companion object {
