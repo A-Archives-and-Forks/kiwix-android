@@ -478,9 +478,7 @@ class PageScreenTest {
 
   @Test
   fun dateItem_todayLabelDisplayed() {
-    // Use US locale to match Robolectric default for parsing/formatting
-    val today =
-      LocalDate.now().format(DateTimeFormatter.ofPattern("d MMM yyyy", java.util.Locale.US))
+    val today = LocalDate.now().format(DateTimeFormatter.ofPattern("d MMM yyyy"))
     val dateItem = HistoryListItem.DateItem(today)
     // pageItems must be non-empty so PageScreen renders the PageList
     // (it checks state.pageItems.isEmpty() to decide list vs empty state)

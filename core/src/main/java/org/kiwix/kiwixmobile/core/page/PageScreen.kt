@@ -63,9 +63,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.flow.Flow
-import org.kiwix.kiwixmobile.core.extensions.CollectSideEffectWithActivity
 import org.kiwix.kiwixmobile.core.R
 import org.kiwix.kiwixmobile.core.extensions.ActivityExtensions.isCustomApp
+import org.kiwix.kiwixmobile.core.extensions.CollectSideEffectWithActivity
 import org.kiwix.kiwixmobile.core.extensions.bottomShadow
 import org.kiwix.kiwixmobile.core.extensions.hideKeyboardOnLazyColumnScroll
 import org.kiwix.kiwixmobile.core.main.CoreMainActivity
@@ -75,7 +75,6 @@ import org.kiwix.kiwixmobile.core.page.history.models.HistoryListItem.DateItem
 import org.kiwix.kiwixmobile.core.page.viewmodel.Action
 import org.kiwix.kiwixmobile.core.page.viewmodel.PageState
 import org.kiwix.kiwixmobile.core.page.viewmodel.PageViewModel
-
 import org.kiwix.kiwixmobile.core.ui.components.KiwixAppBar
 import org.kiwix.kiwixmobile.core.ui.components.KiwixSearchView
 import org.kiwix.kiwixmobile.core.ui.components.NavigationIcon
@@ -383,7 +382,7 @@ private fun getFormattedDateLabel(dateString: String): String {
 
 private fun parseDateSafely(dateString: String): LocalDate? {
   return try {
-    LocalDate.parse(dateString, DateTimeFormatter.ofPattern("d MMM yyyy", java.util.Locale.US))
+    LocalDate.parse(dateString, DateTimeFormatter.ofPattern("d MMM yyyy"))
   } catch (_: DateTimeParseException) {
     null
   }
