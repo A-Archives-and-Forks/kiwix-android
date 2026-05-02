@@ -20,6 +20,7 @@ package org.kiwix.kiwixmobile.core.page
 
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
+import androidx.annotation.VisibleForTesting
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -62,9 +63,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.flow.Flow
-import org.kiwix.kiwixmobile.core.extensions.CollectSideEffectWithActivity
 import org.kiwix.kiwixmobile.core.R
 import org.kiwix.kiwixmobile.core.extensions.ActivityExtensions.isCustomApp
+import org.kiwix.kiwixmobile.core.extensions.CollectSideEffectWithActivity
 import org.kiwix.kiwixmobile.core.extensions.bottomShadow
 import org.kiwix.kiwixmobile.core.extensions.hideKeyboardOnLazyColumnScroll
 import org.kiwix.kiwixmobile.core.main.CoreMainActivity
@@ -74,7 +75,6 @@ import org.kiwix.kiwixmobile.core.page.history.models.HistoryListItem.DateItem
 import org.kiwix.kiwixmobile.core.page.viewmodel.Action
 import org.kiwix.kiwixmobile.core.page.viewmodel.PageState
 import org.kiwix.kiwixmobile.core.page.viewmodel.PageViewModel
-
 import org.kiwix.kiwixmobile.core.ui.components.KiwixAppBar
 import org.kiwix.kiwixmobile.core.ui.components.KiwixSearchView
 import org.kiwix.kiwixmobile.core.ui.components.NavigationIcon
@@ -97,6 +97,7 @@ const val NO_ITEMS_TEXT_TESTING_TAG = "noItemsTextTestingTag"
 const val PAGE_LIST_TEST_TAG = "pageListTestingTag"
 const val SEARCH_ICON_TESTING_TAG = "searchIconTestingTag"
 const val DELETE_MENU_ICON_TESTING_TAG = "deleteMenuIconTestingTag"
+const val DATE_ITEM_TEXT_TESTING_TAG = "dateItemTextTestingTag"
 
 @Suppress("LongMethod", "LongParameterList")
 @Composable
@@ -164,6 +165,7 @@ fun <T : Page, S : PageState<T>> PageScreenRoute(
     isInSelectionMode = isInSelectionMode,
     selectedCount = selectedCount,
     switchIsCheckedFlow = switchIsCheckedFlow,
+    isCustomApp = activity.isCustomApp(),
     navigationIcon = { NavigationIcon(onClick = { handleNavigationClick() }) },
     actionMenuItems = actionMenuList(
       deleteIconTitle = deleteIconTitle,
@@ -201,6 +203,7 @@ fun <T : Page, S : PageState<T>> PageScreenRoute(
 
 @Suppress("ComposableLambdaParameterNaming", "LongParameterList", "LongMethod")
 @OptIn(ExperimentalMaterial3Api::class)
+@VisibleForTesting
 @Composable
 fun <T : Page, S : PageState<T>> PageScreen(
   state: S,
@@ -213,6 +216,7 @@ fun <T : Page, S : PageState<T>> PageScreen(
   isInSelectionMode: Boolean,
   selectedCount: Int,
   switchIsCheckedFlow: Flow<Boolean>,
+  isCustomApp: Boolean = false,
   onItemClick: (Page) -> Unit,
   onItemLongClick: (Page) -> Unit,
   onSearchTextChange: (String) -> Unit,
@@ -244,9 +248,10 @@ fun <T : Page, S : PageState<T>> PageScreen(
           )
           PageSwitchRow(
             switchString = switchString,
-            switchIsEnabled = !state.isInSelectionState,
+            switchIsEnabled = !isInSelectionMode,
             switchIsCheckedFlow = switchIsCheckedFlow,
-            onSwitchCheckedChange = onSwitchCheckedChange
+            onSwitchCheckedChange = onSwitchCheckedChange,
+            isCustomApp = isCustomApp
           )
         }
       }
@@ -316,10 +321,10 @@ private fun PageSwitchRow(
   switchIsEnabled: Boolean,
   switchIsCheckedFlow: Flow<Boolean>,
   onSwitchCheckedChange: (Boolean) -> Unit,
+  isCustomApp: Boolean = false
 ) {
-  val context = LocalActivity.current as CoreMainActivity
   // hide switches for custom apps, see more info here https://github.com/kiwix/kiwix-android/issues/3523
-  if (!context.isCustomApp()) {
+  if (!isCustomApp) {
     val isChecked by switchIsCheckedFlow.collectAsState(true)
     Surface(modifier = Modifier.bottomShadow(KIWIX_TOOLBAR_SHADOW_ELEVATION)) {
       Row(
@@ -356,7 +361,9 @@ fun DateItemText(dateItem: DateItem) {
   Text(
     text = getFormattedDateLabel(dateItem.dateString),
     style = MaterialTheme.typography.bodySmall,
-    modifier = Modifier.padding(SIXTEEN_DP)
+    modifier = Modifier
+      .padding(SIXTEEN_DP)
+      .testTag(DATE_ITEM_TEXT_TESTING_TAG)
   )
 }
 
@@ -411,6 +418,7 @@ private fun actionMenuList(
       testingTag = DELETE_MENU_ICON_TESTING_TAG
     )
   )
+
   else -> listOfNotNull(
     when {
       !isSearchActive -> ActionMenuItem(
