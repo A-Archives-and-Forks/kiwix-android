@@ -69,6 +69,7 @@ open class KiwixWebView constructor(
   @Inject
   lateinit var zimReaderContainer: ZimReaderContainer
 
+  private var kiwixWebChromeClient: KiwixWebChromeClient? = null
   private var textZoomJob: Job? = null
 
   private fun setWindowVisibility(isFullScreen: Boolean) {
@@ -100,8 +101,8 @@ open class KiwixWebView constructor(
     }
     setInitialScale(INITIAL_SCALE)
     clearCache(true)
-    webViewClient = coreWebViewClient!!
-    webChromeClient =
+    webViewClient = requireNotNull(coreWebViewClient)
+    kiwixWebChromeClient =
       KiwixWebChromeClient(callback, videoView, this).apply {
         setOnToggledFullscreen(
           object : ToggledFullscreenCallback {
@@ -112,6 +113,7 @@ open class KiwixWebView constructor(
           }
         )
       }
+    webChromeClient = kiwixWebChromeClient
   }
 
   override fun performLongClick(): Boolean {
@@ -173,7 +175,8 @@ open class KiwixWebView constructor(
    */
   fun dispose() {
     // Dispose the chrome client (nulls its callback and view references)
-    (webChromeClient as? KiwixWebChromeClient)?.dispose()
+    kiwixWebChromeClient?.dispose()
+    kiwixWebChromeClient = null
     // Dispose the web view client (nulls its callback reference)
     coreWebViewClient?.dispose()
     // Null out our own references

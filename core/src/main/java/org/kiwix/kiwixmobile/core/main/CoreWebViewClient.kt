@@ -79,9 +79,8 @@ open class CoreWebViewClient(
   @Suppress("NestedBlockDepth")
   fun handleUnsupportedFiles(url: String): Boolean {
     val extension = MimeTypeMap.getFileExtensionFromUrl(url)
-    if (DOCUMENT_TYPES.containsKey(extension)) {
+    if (DOCUMENT_TYPES.containsKey(extension) && callback != null) {
       callback?.showSaveOrOpenUnsupportedFilesDialog(url, DOCUMENT_TYPES[extension])
-        ?: return false
       return true
     }
     return false
