@@ -174,6 +174,10 @@ open class KiwixWebView constructor(
    * InputMethodManager or DecorView retention of this WebView.
    */
   fun dispose() {
+    // Remove javascript interfaces to break reference chains from JavascriptInjector
+    removeJavascriptInterface("tts")
+    removeJavascriptInterface("DocumentParser")
+    removeJavascriptInterface("_VideoEnabledWebView")
     // Dispose the chrome client (nulls its callback and view references)
     kiwixWebChromeClient?.dispose()
     kiwixWebChromeClient = null

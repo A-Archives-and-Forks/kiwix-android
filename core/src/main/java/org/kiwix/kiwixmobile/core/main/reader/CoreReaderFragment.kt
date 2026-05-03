@@ -1148,6 +1148,8 @@ abstract class CoreReaderFragment :
     tempWebViewListForUndo.clear()
     // create a base Activity class that class this.
     activity?.let(::deleteCachedFiles)
+    documentParser?.dispose()
+    documentParser = null
     stopReadAloudSafely()
     tempWebViewForUndo?.dispose()
     tempWebViewForUndo = null

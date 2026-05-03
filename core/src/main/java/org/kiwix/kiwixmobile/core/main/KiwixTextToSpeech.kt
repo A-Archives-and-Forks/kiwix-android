@@ -52,8 +52,8 @@ import java.util.concurrent.atomic.AtomicInteger
  */
 class KiwixTextToSpeech internal constructor(
   val context: Context,
-  private val onInitSucceedListener: OnInitSucceedListener,
-  val onSpeakingListener: OnSpeakingListener,
+  private var onInitSucceedListener: OnInitSucceedListener?,
+  private var onSpeakingListener: OnSpeakingListener?,
   private var onAudioFocusChangeListener: OnAudioFocusChangeListener? = null,
   private val zimReaderContainer: ZimReaderContainer
 ) {
@@ -75,7 +75,7 @@ class KiwixTextToSpeech internal constructor(
         if (status == TextToSpeech.SUCCESS) {
           Log.d(TAG_KIWIX, "TextToSpeech was initialized successfully.")
           isInitialized = true
-          onInitSucceedListener.onInitSucceed()
+          onInitSucceedListener?.onInitSucceed()
         } else {
           Log.e(TAG_KIWIX, "Initialization of TextToSpeech Failed!")
           context.toast(
@@ -109,12 +109,12 @@ class KiwixTextToSpeech internal constructor(
    */
   fun readAloud(webView: WebView) {
     if (currentTTSTask?.paused == true) {
-      onSpeakingListener.onSpeakingEnded()
+      onSpeakingListener?.onSpeakingEnded()
       currentTTSTask = null
     } else if (tts.isSpeaking) {
       if (tts.stop() == SUCCESS) {
         tts.setOnUtteranceProgressListener(null)
-        onSpeakingListener.onSpeakingEnded()
+        onSpeakingListener?.onSpeakingEnded()
       }
     } else {
       val locale = iSO3ToLocale(zimReaderContainer.language)
@@ -165,7 +165,7 @@ class KiwixTextToSpeech internal constructor(
     if (tts.stop() == SUCCESS) {
       currentTTSTask = null
       tts.setOnUtteranceProgressListener(null)
-      onSpeakingListener.onSpeakingEnded()
+      onSpeakingListener?.onSpeakingEnded()
       onAudioFocusChangeListener = null
     }
   }
@@ -226,6 +226,8 @@ class KiwixTextToSpeech internal constructor(
    * {@link https://developer.android.com/guide/topics/media-apps/audio-focus#audio-focus-change }
    */
   fun shutdown() {
+    onInitSucceedListener = null
+    onSpeakingListener = null
     if (::tts.isInitialized) {
       tts.shutdown()
     }
@@ -236,6 +238,7 @@ class KiwixTextToSpeech internal constructor(
       @Suppress("DEPRECATION")
       am.abandonAudioFocus(onAudioFocusChangeListener)
     }
+    onAudioFocusChangeListener = null
   }
 
   /**
@@ -321,7 +324,7 @@ class KiwixTextToSpeech internal constructor(
 
     fun stop() {
       currentTTSTask = null
-      onSpeakingListener.onSpeakingEnded()
+      onSpeakingListener?.onSpeakingEnded()
     }
   }
 
@@ -332,7 +335,7 @@ class KiwixTextToSpeech internal constructor(
           .filter(String::isNotBlank)
           .map(String::trim)
       if (pieces.isNotEmpty()) {
-        onSpeakingListener.onSpeakingStarted()
+        onSpeakingListener?.onSpeakingStarted()
         currentTTSTask = TTSTask(pieces)
         currentTTSTask?.start()
       }
