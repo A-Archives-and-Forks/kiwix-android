@@ -27,6 +27,7 @@ import android.util.AttributeSet
 import android.view.ContextMenu
 import android.view.ViewGroup
 import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.core.content.ContextCompat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -59,10 +60,10 @@ private const val INITIAL_SCALE = 100
 @Suppress("LongParameterList")
 open class KiwixWebView constructor(
   context: Context,
-  private val callback: WebViewCallback,
+  private var callback: WebViewCallback?,
   attrs: AttributeSet,
   videoView: ViewGroup?,
-  private val coreWebViewClient: CoreWebViewClient,
+  private var coreWebViewClient: CoreWebViewClient?,
   val kiwixDataStore: KiwixDataStore
 ) : VideoEnabledWebView(context, attrs) {
   @Inject
@@ -99,14 +100,14 @@ open class KiwixWebView constructor(
     }
     setInitialScale(INITIAL_SCALE)
     clearCache(true)
-    webViewClient = coreWebViewClient
+    webViewClient = coreWebViewClient!!
     webChromeClient =
       KiwixWebChromeClient(callback, videoView, this).apply {
         setOnToggledFullscreen(
           object : ToggledFullscreenCallback {
             override fun toggledFullscreen(fullscreen: Boolean) {
               setWindowVisibility(fullscreen)
-              callback.onFullscreenVideoToggled(fullscreen)
+              callback?.onFullscreenVideoToggled(fullscreen)
             }
           }
         )
@@ -117,8 +118,8 @@ open class KiwixWebView constructor(
     val result = hitTestResult
     if (result.type == HitTestResult.SRC_ANCHOR_TYPE) {
       result.extra?.let {
-        if (!coreWebViewClient.handleUnsupportedFiles(it)) {
-          callback.webViewLongClick(it)
+        if (coreWebViewClient?.handleUnsupportedFiles(it) != true) {
+          callback?.webViewLongClick(it)
         }
       }
       return true
@@ -162,7 +163,25 @@ open class KiwixWebView constructor(
     val windowHeight = if (measuredHeight > 0) measuredHeight else 1
     val pages = contentHeight / windowHeight
     val page = t / windowHeight
-    callback.webViewPageChanged(page, pages)
+    callback?.webViewPageChanged(page, pages)
+  }
+
+  /**
+   * Breaks all reference chains from this WebView back to the fragment/callback.
+   * Must be called before [destroy] to prevent memory leaks via
+   * InputMethodManager or DecorView retention of this WebView.
+   */
+  fun dispose() {
+    // Dispose the chrome client (nulls its callback and view references)
+    (webChromeClient as? KiwixWebChromeClient)?.dispose()
+    // Dispose the web view client (nulls its callback reference)
+    coreWebViewClient?.dispose()
+    // Null out our own references
+    callback = null
+    coreWebViewClient = null
+    // Reset to no-op clients so any in-flight callbacks are harmlessly dropped
+    webChromeClient = null
+    webViewClient = WebViewClient()
   }
 
   class SaveHandler(

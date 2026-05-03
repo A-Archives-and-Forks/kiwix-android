@@ -1143,10 +1143,13 @@ abstract class CoreReaderFragment :
     hideBackToTopTimer?.cancel()
     hideBackToTopTimer = null
     stopOngoingLoadingAndClearWebViewList()
+    // Dispose undo-stashed WebViews to break their callback → fragment references
+    tempWebViewListForUndo.forEach { it.dispose() }
     tempWebViewListForUndo.clear()
     // create a base Activity class that class this.
     activity?.let(::deleteCachedFiles)
     stopReadAloudSafely()
+    tempWebViewForUndo?.dispose()
     tempWebViewForUndo = null
     // to fix IntroFragmentTest see https://github.com/kiwix/kiwix-android/pull/3217
     try {
@@ -1733,6 +1736,9 @@ abstract class CoreReaderFragment :
           webView.clearCache(true)
           // Pause any ongoing activity in the WebView to prevent resource usage
           webView.onPause()
+          // Break the reference chain from WebView → Fragment (via callback)
+          // to prevent memory leaks through InputMethodManager/DecorView retention.
+          webView.dispose()
           // Forcefully destroy the WebView before setting the new ZIM file
           // to ensure that it does not continue attempting to load internal links
           // from the previous ZIM file, which could cause errors.
