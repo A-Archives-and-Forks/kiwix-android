@@ -344,4 +344,5 @@
   <string name="download_failed_state">Epäonnistui</string>
   <string name="searchview_description_clear">Tyhjennä kysely</string>
   <string name="do_you_mean">Tarkoitatko:</string>
+  <string name="open_xiaomi_settings">Avaa asetukset</string>
 </resources>

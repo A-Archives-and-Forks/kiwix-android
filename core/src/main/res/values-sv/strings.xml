@@ -421,4 +421,10 @@
   <string name="confirmation_validate_zim_files">Är du säker på att du vill validera följande ZIM-filer?\n\n %s</string>
   <string name="validating_zim_file">Validerar ZIM-filen…</string>
   <string name="validating_zim_files">Validerar ZIM-filer…</string>
+  <string name="menu_add_to_homescreen">Lägg till på startskärm</string>
+  <string name="added_to_homescreen">Genväg tillagd på startskärmen</string>
+  <string name="add_shortcut_title">Lägg till genväg</string>
+  <string name="shortcut_name_label">Genvägsnamn</string>
+  <string name="open_xiaomi_settings">Öppna inställningarna</string>
+  <string name="xiaomi_permission_required">Den här enheten kräver beviljad behörighet för genvägar innan du kan lägga till en genväg på startskärmen. Bevilja behörigheten i inställningarna.</string>
 </resources>
