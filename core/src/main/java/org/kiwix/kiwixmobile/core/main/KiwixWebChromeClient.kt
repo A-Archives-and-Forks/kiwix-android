@@ -22,21 +22,16 @@ import android.webkit.WebView
 import org.kiwix.videowebview.VideoEnabledWebChromeClient
 
 class KiwixWebChromeClient(
-  private var callback: WebViewCallback?,
+  private val callback: WebViewCallback,
   videoView: ViewGroup?,
   webView: KiwixWebView?
 ) : VideoEnabledWebChromeClient(videoView, null, webView) {
   override fun onProgressChanged(view: WebView, progress: Int) {
-    callback?.webViewProgressChanged(progress, view)
+    callback.webViewProgressChanged(progress, view)
   }
 
   override fun onReceivedTitle(view: WebView, title: String) {
     super.onReceivedTitle(view, title)
-    callback?.webViewTitleUpdated(title)
-  }
-
-  override fun dispose() {
-    super.dispose()
-    callback = null
+    callback.webViewTitleUpdated(title)
   }
 }

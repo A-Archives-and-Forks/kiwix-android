@@ -60,10 +60,10 @@ private const val INITIAL_SCALE = 100
 @Suppress("LongParameterList")
 open class KiwixWebView constructor(
   context: Context,
-  private var callback: WebViewCallback?,
+  private val callback: WebViewCallback,
   attrs: AttributeSet,
   videoView: ViewGroup?,
-  private var coreWebViewClient: CoreWebViewClient?,
+  private val coreWebViewClient: CoreWebViewClient,
   val kiwixDataStore: KiwixDataStore
 ) : VideoEnabledWebView(context, attrs) {
   @Inject
@@ -101,14 +101,14 @@ open class KiwixWebView constructor(
     }
     setInitialScale(INITIAL_SCALE)
     clearCache(true)
-    webViewClient = requireNotNull(coreWebViewClient)
+    webViewClient = coreWebViewClient
     kiwixWebChromeClient =
       KiwixWebChromeClient(callback, videoView, this).apply {
         setOnToggledFullscreen(
           object : ToggledFullscreenCallback {
             override fun toggledFullscreen(fullscreen: Boolean) {
               setWindowVisibility(fullscreen)
-              callback?.onFullscreenVideoToggled(fullscreen)
+              callback.onFullscreenVideoToggled(fullscreen)
             }
           }
         )
@@ -120,8 +120,8 @@ open class KiwixWebView constructor(
     val result = hitTestResult
     if (result.type == HitTestResult.SRC_ANCHOR_TYPE) {
       result.extra?.let {
-        if (coreWebViewClient?.handleUnsupportedFiles(it) != true) {
-          callback?.webViewLongClick(it)
+        if (!coreWebViewClient.handleUnsupportedFiles(it)) {
+          callback.webViewLongClick(it)
         }
       }
       return true
@@ -165,7 +165,7 @@ open class KiwixWebView constructor(
     val windowHeight = if (measuredHeight > 0) measuredHeight else 1
     val pages = contentHeight / windowHeight
     val page = t / windowHeight
-    callback?.webViewPageChanged(page, pages)
+    callback.webViewPageChanged(page, pages)
   }
 
   /**
@@ -178,14 +178,9 @@ open class KiwixWebView constructor(
     removeJavascriptInterface("tts")
     removeJavascriptInterface("DocumentParser")
     removeJavascriptInterface("_VideoEnabledWebView")
-    // Dispose the chrome client (nulls its callback and view references)
+    // Dispose the chrome client (nulls its view references in parent class)
     kiwixWebChromeClient?.dispose()
     kiwixWebChromeClient = null
-    // Dispose the web view client (nulls its callback reference)
-    coreWebViewClient?.dispose()
-    // Null out our own references
-    callback = null
-    coreWebViewClient = null
     // Reset to no-op clients so any in-flight callbacks are harmlessly dropped
     webChromeClient = null
     webViewClient = WebViewClient()

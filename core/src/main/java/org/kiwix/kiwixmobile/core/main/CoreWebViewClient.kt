@@ -32,7 +32,7 @@ import org.kiwix.kiwixmobile.core.utils.TAG_KIWIX
 import org.kiwix.kiwixmobile.core.utils.files.Log
 
 open class CoreWebViewClient(
-  protected var callback: WebViewCallback?,
+  protected val callback: WebViewCallback,
   protected val zimReaderContainer: ZimReaderContainer
 ) : WebViewClient() {
   private var urlWithAnchor: String? = null
@@ -40,7 +40,7 @@ open class CoreWebViewClient(
   @Suppress("ReturnCount")
   override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
     var url = request.url.toString()
-    callback?.webViewUrlLoading()
+    callback.webViewUrlLoading()
     url = convertLegacyUrl(url)
     urlWithAnchor = if (url.contains("#")) url else null
     if (zimReaderContainer.isRedirect(url)) {
@@ -65,7 +65,7 @@ open class CoreWebViewClient(
 
     // Otherwise, the link is not for a page on my site, so launch another Activity that handles URLs
     val intent = Intent(Intent.ACTION_VIEW, url.toUri())
-    callback?.openExternalUrl(intent)
+    callback.openExternalUrl(intent)
     return true
   }
 
@@ -79,8 +79,8 @@ open class CoreWebViewClient(
   @Suppress("NestedBlockDepth")
   fun handleUnsupportedFiles(url: String): Boolean {
     val extension = MimeTypeMap.getFileExtensionFromUrl(url)
-    if (DOCUMENT_TYPES.containsKey(extension) && callback != null) {
-      callback?.showSaveOrOpenUnsupportedFilesDialog(url, DOCUMENT_TYPES[extension])
+    if (DOCUMENT_TYPES.containsKey(extension)) {
+      callback.showSaveOrOpenUnsupportedFilesDialog(url, DOCUMENT_TYPES[extension])
       return true
     }
     return false
@@ -91,7 +91,7 @@ open class CoreWebViewClient(
     request: WebResourceRequest?,
     error: WebResourceError?
   ) {
-    callback?.webViewFailedLoading(request?.url.toString())
+    callback.webViewFailedLoading(request?.url.toString())
   }
 
   override fun onPageFinished(view: WebView, url: String) {
@@ -101,7 +101,7 @@ open class CoreWebViewClient(
       return
     }
     jumpToAnchor(view, url)
-    callback?.webViewUrlFinishedLoading()
+    callback.webViewUrlFinishedLoading()
   }
 
   /*
@@ -133,14 +133,6 @@ open class CoreWebViewClient(
         null
       )
     }
-  }
-
-  /**
-   * Releases the callback reference to prevent memory leaks.
-   * Must be called before the owning WebView is destroyed.
-   */
-  fun dispose() {
-    callback = null
   }
 
   companion object {
