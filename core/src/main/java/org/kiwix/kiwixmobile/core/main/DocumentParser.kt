@@ -25,7 +25,7 @@ import android.webkit.WebView
 import org.kiwix.kiwixmobile.core.main.reader.DocumentSection
 import kotlin.collections.List
 
-class DocumentParser(private var listener: DocumentParser.SectionsListener) {
+class DocumentParser(private val listener: DocumentParser.SectionsListener) {
   private var title: String = ""
   private val sections = mutableListOf<DocumentSection>()
 

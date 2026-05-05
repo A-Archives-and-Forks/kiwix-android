@@ -285,6 +285,19 @@ open class VideoEnabledWebChromeClient :
     false // By returning false, onCompletion() will be called
 
   /**
+   * Releases all retained references to prevent memory leaks.
+   * Must be called before the owning WebView is destroyed.
+   */
+  open fun dispose() {
+    webView = null
+    activityVideoView = null
+    loadingView = null
+    toggledFullscreenCallback = null
+    videoViewContainer = null
+    videoViewCallback = null
+  }
+
+  /**
    * Notifies the class that the back key has been pressed by the user.
    * This must be called from the Activity's onBackPressed(), and if it returns false, the activity
    * itself should handle it. Otherwise don't do anything.

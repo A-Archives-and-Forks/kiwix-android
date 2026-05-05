@@ -236,6 +236,7 @@ class KiwixTextToSpeech internal constructor(
       @Suppress("DEPRECATION")
       am.abandonAudioFocus(onAudioFocusChangeListener)
     }
+    onAudioFocusChangeListener = null
   }
 
   /**

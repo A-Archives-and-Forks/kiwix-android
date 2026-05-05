@@ -27,6 +27,7 @@ import android.util.AttributeSet
 import android.view.ContextMenu
 import android.view.ViewGroup
 import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.core.content.ContextCompat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -68,6 +69,7 @@ open class KiwixWebView constructor(
   @Inject
   lateinit var zimReaderContainer: ZimReaderContainer
 
+  private var kiwixWebChromeClient: KiwixWebChromeClient? = null
   private var textZoomJob: Job? = null
 
   private fun setWindowVisibility(isFullScreen: Boolean) {
@@ -100,7 +102,7 @@ open class KiwixWebView constructor(
     setInitialScale(INITIAL_SCALE)
     clearCache(true)
     webViewClient = coreWebViewClient
-    webChromeClient =
+    kiwixWebChromeClient =
       KiwixWebChromeClient(callback, videoView, this).apply {
         setOnToggledFullscreen(
           object : ToggledFullscreenCallback {
@@ -111,6 +113,7 @@ open class KiwixWebView constructor(
           }
         )
       }
+    webChromeClient = kiwixWebChromeClient
   }
 
   override fun performLongClick(): Boolean {
@@ -163,6 +166,24 @@ open class KiwixWebView constructor(
     val pages = contentHeight / windowHeight
     val page = t / windowHeight
     callback.webViewPageChanged(page, pages)
+  }
+
+  /**
+   * Breaks all reference chains from this WebView back to the fragment/callback.
+   * Must be called before [destroy] to prevent memory leaks via
+   * InputMethodManager or DecorView retention of this WebView.
+   */
+  fun dispose() {
+    // Remove javascript interfaces to break reference chains from JavascriptInjector
+    removeJavascriptInterface("tts")
+    removeJavascriptInterface("DocumentParser")
+    removeJavascriptInterface("_VideoEnabledWebView")
+    // Dispose the chrome client (nulls its view references in parent class)
+    kiwixWebChromeClient?.dispose()
+    kiwixWebChromeClient = null
+    // Reset to no-op clients so any in-flight callbacks are harmlessly dropped
+    webChromeClient = null
+    webViewClient = WebViewClient()
   }
 
   class SaveHandler(
