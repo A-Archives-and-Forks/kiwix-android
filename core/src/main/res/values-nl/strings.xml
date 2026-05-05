@@ -417,4 +417,10 @@
   <string name="confirmation_validate_zim_files">Weet u zeker dat u de volgende ZIM-bestanden wilt valideren?\n\n%s</string>
   <string name="validating_zim_file">ZIM-bestand valideren…</string>
   <string name="validating_zim_files">ZIM-bestanden valideren…</string>
+  <string name="menu_add_to_homescreen">Toevoegen aan startscherm</string>
+  <string name="added_to_homescreen">Snelkoppeling toegevoegd aan het startscherm</string>
+  <string name="add_shortcut_title">Snelkoppeling toevoegen</string>
+  <string name="shortcut_name_label">Snelkoppelingnaam</string>
+  <string name="open_xiaomi_settings">Instellingen openen</string>
+  <string name="xiaomi_permission_required">Voor het toevoegen van een snelkoppeling aan het startscherm van dit apparaat is toestemming voor snelkoppelingen vereist. Geef deze toestemming in de instellingen.</string>
 </resources>

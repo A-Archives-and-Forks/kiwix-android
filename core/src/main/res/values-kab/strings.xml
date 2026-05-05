@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Authors:
+* Belkacem77
+* ButterflyOfFire
+* Linda.D
+* Sayem AtVkm
+-->
+<resources>
+  <string name="menu_help">Tallalt</string>
+  <string name="menu_home">Agejdan</string>
+  <string name="menu_settings">Iɣewwaṛen</string>
+  <string name="menu_search_in_text">Nadi deg usebter</string>
+  <string name="menu_random_article">Amagrad agacuran</string>
+  <string name="menu_about_app">Ɣef usnas n %s</string>
+  <string name="save_media">Sekles amidya</string>
+  <string name="search_label">Nadi</string>
+  <string name="more_options">Ugar n textiṛiyin</string>
+  <string name="choose_file">Fren afaylu n umiḍan (*.zim)</string>
+  <string name="open_in_new_tab">Ldi aseɣwen deg icer amaynut</string>
+  <string name="go_to_wifi_settings_label">Ddu ɣer yiɣewwaren WIFI</string>
+  <string name="progress_dialog_starting_server">Asekker n uqeddac</string>
+  <string name="start_server_label">Sekker aqeddac</string>
+  <string name="stop_server_label">Seḥbes aqeddac</string>
+  <string name="pref_display_title">Sken</string>
+  <string name="pref_info_title">Talɣut</string>
+  <string name="pref_info_version">Lqem</string>
+  <string name="pref_theme">Asentel</string>
+  <string name="theme_system">Anagraw</string>
+  <string name="theme_light">Aceɛlal</string>
+  <string name="theme_dark">Ubrik</string>
+  <string name="pref_back_to_top">Uɣal d asawen</string>
+  <string name="pref_language_title">Tutlayt</string>
+  <string name="pref_language_chooser">Fren tutlayt</string>
+  <string name="pref_credits">Iwiziwen d Turagin</string>
+  <string name="delete_recent_search_item">Ad kksed aferdis-agi?</string>
+  <string name="pref_clear_all_history_title">Sfeḍ amazray</string>
+  <string name="pref_notes">Tizmilin</string>
+  <string name="pref_permission">Tasirag</string>
+  <string name="all_history_cleared">Akk amazray yettwasfeḍ</string>
+  <string name="clear_all_history_dialog_title" fuzzy="true">Sfeḍ akk amazray</string>
+  <string name="share">Bḍu</string>
+  <string name="delete">Kkes</string>
+  <string name="cancel">Semmet</string>
+  <string name="got_it">Awi-t</string>
+  <string name="did_you_know">Tezram?</string>
+  <string name="tab_closed">iccer yemdel</string>
+  <string name="bookmark_added">Anurif yettwarna</string>
+  <string name="no_thanks">Ala, tanemmirt</string>
+  <string name="rate_dialog_neutral">Ticki</string>
+  <string name="open">Ldi</string>
+  <string name="bookmark_removed">Anurif yettwakkes</string>
+  <string name="pref_newtab_background_title">Ldi iccer amaynut deg ugilal</string>
+  <string name="new_tab_snack_bar">amagrad yeldi deg icer amaynut</string>
+  <string name="search_widget_text">Nadi di Kiwix</string>
+  <string name="local_zims">Ibenk</string>
+  <string name="remote_zims">Iqqen</string>
+  <string name="library">Tanedlist</string>
+  <string name="no_files_here">Ulac Ifuyla dagi</string>
+  <string name="download">Zdem</string>
+  <string name="zim_simple">Aḥerfi</string>
+  <string name="zim_no_pic">Ulac tugniwin</string>
+  <string name="zim_no_vid">Ulac tividyutin</string>
+  <string name="help_5">Anida-t ugbur?</string>
+  <string name="pref_storage">Aklas</string>
+  <string name="pref_current_folder">Akaram amiran</string>
+  <string name="tts_pause">Serǧu</string>
+  <string name="tts_resume">Kemmel</string>
+  <string name="stop">Seḥbes</string>
+  <string name="internal_storage">Agensan</string>
+  <string name="yes">Ih</string>
+  <string name="no">Uhu</string>
+  <string name="confirm_stop_download_title">Seḥbes asider?</string>
+  <string name="next">Ar zdat</string>
+  <string name="previous">Γer deffir</string>
+  <string name="time_day">ass</string>
+  <string name="time_hour">sr</string>
+  <string name="time_minute">sd</string>
+  <string name="time_second">sn</string>
+  <string name="time_today">Ass-a</string>
+  <string name="time_yesterday">Iḍelli</string>
+  <string name="your_languages">Tutlayin i yettwafernen:</string>
+  <string name="your_language">Tutlayin i yettwafernen: %s</string>
+  <string name="other_languages">Tutlayin-nniḍen:</string>
+  <string name="downloading" fuzzy="true">Azdam:</string>
+  <string name="crash_checkbox_language">Iɣewwaṛen n tutlayt-ik</string>
+  <string name="new_tab_shortcut_label">Iccer amaynut</string>
+  <string name="get_content_shortcut_label">Awi-d agbur</string>
+  <string name="articleCount">%s n imagraden</string>
+  <string name="welcome_to_the_family">Ansuf yis-k·m ar twacult</string>
+  <string name="go_to_previous_page">Ddu ɣer usebter yezrin</string>
+  <string name="go_to_next_page">Ddu ɣer usebter i d-iteddun</string>
+  <string name="select_language">Fren tutlayt</string>
+  <string name="save_languages">Sekles tutlayin</string>
+  <string name="all_languages">Akk tutlayin</string>
+  <string name="history">Amazray</string>
+  <string name="close_all_tabs">Mdel akk iccaren</string>
+  <string name="close_tab">Mdel iccer</string>
+  <string name="save">Sekles</string>
+  <string name="note">Tazmilt</string>
+  <string name="your_device">Ibenk-ik·im:</string>
+  <string name="device_name">Isem n yibenk</string>
+  <string name="status">Addad</string>
+  <string name="tag_text_only">Aḍris kan</string>
+  <string name="percentage">%d%%</string>
+  <string name="action_copy">Nɣel</string>
+  <string name="open_note">Ldi tazmilt</string>
+  <string name="open_article">Ldi amagrad</string>
+  <string name="go_to_settings_label">Ddu ar iɣewwaren</string>
+  <string name="your_device_name_message">Isem n yibenk-ik·im ad d-iban da.</string>
+  <string name="downloading_state">Azdam</string>
+  <string name="add_shortcut_title">Rnu anegzum</string>
+  <string name="shortcut_name_label">Isem n unegzum</string>
+  <string name="open_xiaomi_settings">Ldi iɣewwaren</string>
+</resources>

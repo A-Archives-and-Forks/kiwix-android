@@ -405,4 +405,7 @@
   <string name="do_you_mean">Vuoi dire:</string>
   <string name="confirmation_validate_zim_files">Sei sicuro di voler convalidare i seguenti file ZIM? \n\n%s</string>
   <string name="validating_zim_file">Convalida del file ZIM in corso…</string>
+  <string name="added_to_homescreen">Scorciatoia aggiunta alla schermata iniziale</string>
+  <string name="add_shortcut_title">Aggiungi scorciatoia</string>
+  <string name="shortcut_name_label">Nome abbreviato</string>
 </resources>
