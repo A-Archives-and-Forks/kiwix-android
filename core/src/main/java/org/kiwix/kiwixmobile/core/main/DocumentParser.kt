@@ -25,17 +25,12 @@ import android.webkit.WebView
 import org.kiwix.kiwixmobile.core.main.reader.DocumentSection
 import kotlin.collections.List
 
-class DocumentParser(listener: DocumentParser.SectionsListener) {
-  private var listener: SectionsListener? = listener
+class DocumentParser(private val listener: DocumentParser.SectionsListener) {
   private var title: String = ""
   private val sections = mutableListOf<DocumentSection>()
 
   fun initInterface(webView: WebView) {
     webView.addJavascriptInterface(ParserCallback(), "DocumentParser")
-  }
-
-  fun dispose() {
-    listener = null
   }
 
   interface SectionsListener {
@@ -62,13 +57,13 @@ class DocumentParser(listener: DocumentParser.SectionsListener) {
     @JavascriptInterface fun start() {
       title = ""
       sections.clear()
-      Handler(Looper.getMainLooper()).post(Runnable { listener?.clearSections() })
+      Handler(Looper.getMainLooper()).post(Runnable(listener::clearSections))
     }
 
     @JavascriptInterface fun stop() {
       val listToBeSentToMainThread: List<DocumentSection> = sections.toList()
       Handler(Looper.getMainLooper()).post {
-        listener?.sectionsLoaded(
+        listener.sectionsLoaded(
           title,
           listToBeSentToMainThread
         )

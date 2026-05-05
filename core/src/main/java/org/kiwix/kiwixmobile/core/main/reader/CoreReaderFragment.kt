@@ -699,21 +699,23 @@ abstract class CoreReaderFragment :
     get() = readerMenuState?.isInTabSwitcher == true
 
   private fun setupDocumentParser() {
-    documentParser = DocumentParser(object : SectionsListener {
-      override fun sectionsLoaded(
-        title: String,
-        sections: List<DocumentSection>
-      ) {
-        if (isAdded) {
-          documentSections?.addAll(sections)
-          readerScreenState.update { copy(tableOfContentTitle = title) }
-        }
-      }
+    documentParser = DocumentParser(requireNotNull(documentSectionListener))
+  }
 
-      override fun clearSections() {
-        documentSections?.clear()
+  private var documentSectionListener: SectionsListener? = object : SectionsListener {
+    override fun sectionsLoaded(
+      title: String,
+      sections: List<DocumentSection>
+    ) {
+      if (isAdded) {
+        documentSections?.addAll(sections)
+        readerScreenState.update { copy(tableOfContentTitle = title) }
       }
-    })
+    }
+
+    override fun clearSections() {
+      documentSections?.clear()
+    }
   }
 
   private fun addFileReader() {
@@ -1148,7 +1150,7 @@ abstract class CoreReaderFragment :
     tempWebViewListForUndo.clear()
     // create a base Activity class that class this.
     activity?.let(::deleteCachedFiles)
-    documentParser?.dispose()
+    documentSectionListener = null
     documentParser = null
     stopReadAloudSafely()
     tempWebViewForUndo?.dispose()
